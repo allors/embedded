@@ -1,0 +1,81 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="Allors.Embedded.Meta.EmbeddedMeta">
+    <Position X="0.5" Y="0.5" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAIAAAQAACAIABAAAAAAYAABAgAAAgAAQAAACA=</HashCode>
+      <FileName>Meta\EmbeddedMeta.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsCollectionAssociation>
+      <Field Name="objectTypeByName" />
+    </ShowAsCollectionAssociation>
+  </Class>
+  <Class Name="Allors.Embedded.Meta.EmbeddedObjectType">
+    <Position X="4.5" Y="1.25" Width="2.5" />
+    <TypeIdentifier>
+      <HashCode>QgQEAAAAAADQIARAAGAIABQQAYAABIgAAQAAgAAAACA=</HashCode>
+      <FileName>Meta\EmbeddedObjectType.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsCollectionAssociation>
+      <Field Name="assignedAssociationTypeByName" />
+      <Field Name="assignedRoleTypeByName" />
+    </ShowAsCollectionAssociation>
+  </Class>
+  <Interface Name="Allors.Embedded.Meta.IEmbeddedAssociationType">
+    <Position X="9.5" Y="1.25" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AAIAAAAAAAAAAAIAAAAAAAQAAAAAAAACAIAAAAAAAAA=</HashCode>
+      <FileName>Meta\IEmbeddedAssociationType.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="Allors.Embedded.Meta.IEmbeddedRoleType">
+    <Position X="15.25" Y="0.75" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAiAAAAAAAAAIAEAAAgAQAgCAAAAACAIAAAAAAAAA=</HashCode>
+      <FileName>Meta\IEmbeddedRoleType.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="Allors.Embedded.Meta.IEmbeddedCompositeAssociationType">
+    <Position X="9.25" Y="4" Width="2.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAiAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Meta\IEmbeddedCompositeAssociationType.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="Allors.Embedded.Meta.IEmbeddedManyToAssociationType" Collapsed="true">
+    <Position X="10.75" Y="6.25" Width="2.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Meta\IEmbeddedManyToAssociationType.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="Allors.Embedded.Meta.IEmbeddedOneToAssociationType" Collapsed="true">
+    <Position X="8.25" Y="6.25" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Meta\IEmbeddedOneToAssociationType.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="Allors.Embedded.Meta.IEmbeddedCompositeRoleType">
+    <Position X="15" Y="4.25" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAiAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Meta\IEmbeddedCompositeRoleType.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="Allors.Embedded.Meta.IEmbeddedToManyRoleType" Collapsed="true">
+    <Position X="16.5" Y="6.25" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Meta\IEmbeddedToManyRoleType.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="Allors.Embedded.Meta.IEmbeddedToOneRoleType" Collapsed="true">
+    <Position X="14" Y="6.25" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Meta\IEmbeddedToOneRoleType.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>
