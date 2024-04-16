@@ -43,7 +43,7 @@
                     };
                 }
 
-                throw new ArgumentException("Unknown role or association", nameof(name));
+                throw new ArgumentException("Unknown role or association", name);
             }
 
             set
@@ -70,7 +70,7 @@
                     }
                 }
 
-                throw new ArgumentException("Unknown role", nameof(name));
+                throw new ArgumentException("Unknown role", name);
             }
         }
 
