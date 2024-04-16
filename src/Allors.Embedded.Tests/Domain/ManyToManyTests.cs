@@ -274,5 +274,29 @@
             Assert.Contains(john, (IEnumerable<EmbeddedObject>)hooli["Employees"]!);
             Assert.Contains(jenny, (IEnumerable<EmbeddedObject>)hooli["Employees"]!);
         }
+
+        [Fact]
+        public void DefaultRoleName()
+        {
+            var meta = new EmbeddedMeta();
+            var organization = meta.AddClass("Organization");
+            var person = meta.AddClass("Person");
+            meta.AddUnit<string>(organization, "Name");
+            (EmbeddedManyToManyRoleType people, _) = meta.AddManyToMany(organization, person);
+
+            var population = new EmbeddedPopulation();
+
+            var acme = population.Create(organization, v => v["Name"] = "Acme");
+
+            var jane = population.Create(person);
+
+            acme.Add(people, jane);
+
+            Assert.Single((IEnumerable<EmbeddedObject>)jane["OrganizationWherePerson"]!);
+            Assert.Contains(acme, (IEnumerable<EmbeddedObject>)jane["OrganizationWherePerson"]!);
+
+            Assert.Single((IEnumerable<EmbeddedObject>)acme["Persons"]!);
+            Assert.Contains(jane, (IEnumerable<EmbeddedObject>)acme["Persons"]!);
+        }
     }
 }

@@ -156,5 +156,25 @@
                 acme[owner] = gizmo;
             });
         }
+
+        [Fact]
+        public void DefaultRoleName()
+        {
+            var meta = new EmbeddedMeta();
+            var organization = meta.AddClass("Organization");
+            var person = meta.AddClass("Person");
+            meta.AddOneToOne(organization, person);
+
+            var population = new EmbeddedPopulation();
+
+            var acme = population.Create(organization);
+
+            var jane = population.Create(person);
+
+            acme["Person"] = jane;
+
+            Assert.Equal(jane, acme["Person"]);
+            Assert.Equal(acme, jane["OrganizationWherePerson"]);
+        }
     }
 }

@@ -19,13 +19,13 @@
 
         public EmbeddedUnitRoleType AddUnit<TRole>(EmbeddedObjectType associationObjectType, string roleName, string? associationName = null) => associationObjectType.AddUnit(this.Unit(typeof(TRole)), roleName, associationName);
 
-        public EmbeddedOneToOneRoleType AddOneToOne(EmbeddedObjectType associationObjectType, EmbeddedObjectType roleObjectType, string roleName, string? associationName = null) => associationObjectType.AddOneToOne(roleObjectType, roleName, associationName);
+        public EmbeddedOneToOneRoleType AddOneToOne(EmbeddedObjectType associationObjectType, EmbeddedObjectType roleObjectType, string? roleName = null, string? associationName = null) => associationObjectType.AddOneToOne(roleObjectType, roleName, associationName);
 
-        public EmbeddedManyToOneRoleType AddManyToOne(EmbeddedObjectType associationObjectType, EmbeddedObjectType roleObjectType, string roleName, string? associationName = null) => associationObjectType.AddManyToOne(roleObjectType, roleName, associationName);
+        public EmbeddedManyToOneRoleType AddManyToOne(EmbeddedObjectType associationObjectType, EmbeddedObjectType roleObjectType, string? roleName = null, string? associationName = null) => associationObjectType.AddManyToOne(roleObjectType, roleName, associationName);
 
-        public EmbeddedOneToManyRoleType AddOneToMany(EmbeddedObjectType associationObjectType, EmbeddedObjectType roleObjectType, string roleName, string? associationName = null) => associationObjectType.AddOneToMany(roleObjectType, roleName, associationName);
+        public EmbeddedOneToManyRoleType AddOneToMany(EmbeddedObjectType associationObjectType, EmbeddedObjectType roleObjectType, string? roleName = null, string? associationName = null) => associationObjectType.AddOneToMany(roleObjectType, roleName, associationName);
 
-        public EmbeddedManyToManyRoleType AddManyToMany(EmbeddedObjectType associationObjectType, EmbeddedObjectType roleObjectType, string roleName, string? associationName = null) => associationObjectType.AddManyToMany(roleObjectType, roleName, associationName);
+        public EmbeddedManyToManyRoleType AddManyToMany(EmbeddedObjectType associationObjectType, EmbeddedObjectType roleObjectType, string? roleName = null, string? associationName = null) => associationObjectType.AddManyToMany(roleObjectType, roleName, associationName);
 
         public EmbeddedObjectType AddInterface(string name, params EmbeddedObjectType[] supertypes)
         {
