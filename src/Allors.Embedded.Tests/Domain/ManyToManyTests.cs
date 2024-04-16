@@ -71,11 +71,11 @@
             acme[employees] = new[] { jane }.ToFrozenSet();
 
             Assert.Single((IReadOnlySet<EmbeddedObject>)jane["OrganizationsWhereEmployee"]!);
-            Assert.Contains(acme, (IReadOnlySet<EmbeddedObject>)jane["OrganizationWhereEmployee"]!);
+            Assert.Contains(acme, (IReadOnlySet<EmbeddedObject>)jane["OrganizationsWhereEmployee"]!);
 
-            Assert.Empty((IEnumerable<EmbeddedObject>)john["OrganizationWhereEmployee"]!);
+            Assert.Empty((IEnumerable<EmbeddedObject>)john["OrganizationsWhereEmployee"]!);
 
-            Assert.Empty((IEnumerable<EmbeddedObject>)jenny["OrganizationWhereEmployee"]!);
+            Assert.Empty((IEnumerable<EmbeddedObject>)jenny["OrganizationsWhereEmployee"]!);
 
             Assert.Single((IEnumerable<EmbeddedObject>)acme["Employees"]!);
             Assert.Contains(jane, (IEnumerable<EmbeddedObject>)acme["Employees"]!);
@@ -84,13 +84,13 @@
 
             acme["Employees"] = new[] { jane, john };
 
-            Assert.Single((IEnumerable<EmbeddedObject>)jane["OrganizationWhereEmployee"]!);
-            Assert.Contains(acme, (IEnumerable<EmbeddedObject>)jane["OrganizationWhereEmployee"]!);
+            Assert.Single((IEnumerable<EmbeddedObject>)jane["OrganizationsWhereEmployee"]!);
+            Assert.Contains(acme, (IEnumerable<EmbeddedObject>)jane["OrganizationsWhereEmployee"]!);
 
-            Assert.Single((IEnumerable<EmbeddedObject>)john["OrganizationWhereEmployee"]!);
-            Assert.Contains(acme, (IEnumerable<EmbeddedObject>)john["OrganizationWhereEmployee"]!);
+            Assert.Single((IEnumerable<EmbeddedObject>)john["OrganizationsWhereEmployee"]!);
+            Assert.Contains(acme, (IEnumerable<EmbeddedObject>)john["OrganizationsWhereEmployee"]!);
 
-            Assert.Empty((IEnumerable<EmbeddedObject>)jenny["OrganizationWhereEmployee"]!);
+            Assert.Empty((IEnumerable<EmbeddedObject>)jenny["OrganizationsWhereEmployee"]!);
 
             Assert.Equal(2, ((IEnumerable<EmbeddedObject>)acme["Employees"]!).Count());
             Assert.Contains(jane, (IEnumerable<EmbeddedObject>)acme["Employees"]!);
@@ -100,14 +100,14 @@
 
             acme["Employees"] = new[] { jane, john, jenny };
 
-            Assert.Single((IEnumerable<EmbeddedObject>)jane["OrganizationWhereEmployee"]!);
-            Assert.Contains(acme, (IEnumerable<EmbeddedObject>)jane["OrganizationWhereEmployee"]!);
+            Assert.Single((IEnumerable<EmbeddedObject>)jane["OrganizationsWhereEmployee"]!);
+            Assert.Contains(acme, (IEnumerable<EmbeddedObject>)jane["OrganizationsWhereEmployee"]!);
 
-            Assert.Single((IEnumerable<EmbeddedObject>)john["OrganizationWhereEmployee"]!);
-            Assert.Contains(acme, (IEnumerable<EmbeddedObject>)john["OrganizationWhereEmployee"]!);
+            Assert.Single((IEnumerable<EmbeddedObject>)john["OrganizationsWhereEmployee"]!);
+            Assert.Contains(acme, (IEnumerable<EmbeddedObject>)john["OrganizationsWhereEmployee"]!);
 
-            Assert.Single((IEnumerable<EmbeddedObject>)jenny["OrganizationWhereEmployee"]!);
-            Assert.Contains(acme, (IEnumerable<EmbeddedObject>)jenny["OrganizationWhereEmployee"]!);
+            Assert.Single((IEnumerable<EmbeddedObject>)jenny["OrganizationsWhereEmployee"]!);
+            Assert.Contains(acme, (IEnumerable<EmbeddedObject>)jenny["OrganizationsWhereEmployee"]!);
 
             Assert.Equal(3, ((IEnumerable<EmbeddedObject>)acme["Employees"]!).Count());
             Assert.Contains(jane, (IEnumerable<EmbeddedObject>)acme["Employees"]!);
@@ -118,9 +118,9 @@
 
             acme["Employees"] = Array.Empty<EmbeddedObject>();
 
-            Assert.Empty((IEnumerable<EmbeddedObject>)jane["OrganizationWhereEmployee"]!);
-            Assert.Empty((IEnumerable<EmbeddedObject>)john["OrganizationWhereEmployee"]!);
-            Assert.Empty((IEnumerable<EmbeddedObject>)jenny["OrganizationWhereEmployee"]!);
+            Assert.Empty((IEnumerable<EmbeddedObject>)jane["OrganizationsWhereEmployee"]!);
+            Assert.Empty((IEnumerable<EmbeddedObject>)john["OrganizationsWhereEmployee"]!);
+            Assert.Empty((IEnumerable<EmbeddedObject>)jenny["OrganizationsWhereEmployee"]!);
 
             Assert.Empty((IEnumerable<EmbeddedObject>)acme["Employees"]!);
             Assert.Empty((IEnumerable<EmbeddedObject>)hooli["Employees"]!);
@@ -148,13 +148,13 @@
 
             acme.Remove(employees, jenny);
 
-            Assert.Single((IEnumerable<EmbeddedObject>)jane["OrganizationWhereEmployee"]!);
-            Assert.Contains(acme, (IEnumerable<EmbeddedObject>)jane["OrganizationWhereEmployee"]!);
+            Assert.Single((IEnumerable<EmbeddedObject>)jane["OrganizationsWhereEmployee"]!);
+            Assert.Contains(acme, (IEnumerable<EmbeddedObject>)jane["OrganizationsWhereEmployee"]!);
 
-            Assert.Single((IEnumerable<EmbeddedObject>)john["OrganizationWhereEmployee"]!);
-            Assert.Contains(acme, (IEnumerable<EmbeddedObject>)john["OrganizationWhereEmployee"]!);
+            Assert.Single((IEnumerable<EmbeddedObject>)john["OrganizationsWhereEmployee"]!);
+            Assert.Contains(acme, (IEnumerable<EmbeddedObject>)john["OrganizationsWhereEmployee"]!);
 
-            Assert.Empty((IEnumerable<EmbeddedObject>)jenny["OrganizationWhereEmployee"]!);
+            Assert.Empty((IEnumerable<EmbeddedObject>)jenny["OrganizationsWhereEmployee"]!);
 
             Assert.Equal(2, ((IEnumerable<EmbeddedObject>)acme["Employees"]!).Count());
             Assert.Contains(jane, (IEnumerable<EmbeddedObject>)acme["Employees"]!);
@@ -164,12 +164,12 @@
 
             acme.Remove(employees, john);
 
-            Assert.Single((IEnumerable<EmbeddedObject>)jane["OrganizationWhereEmployee"]!);
-            Assert.Contains(acme, (IEnumerable<EmbeddedObject>)jane["OrganizationWhereEmployee"]!);
+            Assert.Single((IEnumerable<EmbeddedObject>)jane["OrganizationsWhereEmployee"]!);
+            Assert.Contains(acme, (IEnumerable<EmbeddedObject>)jane["OrganizationsWhereEmployee"]!);
 
-            Assert.Empty((IEnumerable<EmbeddedObject>)john["OrganizationWhereEmployee"]!);
+            Assert.Empty((IEnumerable<EmbeddedObject>)john["OrganizationsWhereEmployee"]!);
 
-            Assert.Empty((IEnumerable<EmbeddedObject>)jenny["OrganizationWhereEmployee"]!);
+            Assert.Empty((IEnumerable<EmbeddedObject>)jenny["OrganizationsWhereEmployee"]!);
 
             Assert.Single((IEnumerable<EmbeddedObject>)acme["Employees"]!);
             Assert.Contains(jane, (IEnumerable<EmbeddedObject>)acme["Employees"]!);
@@ -178,9 +178,9 @@
 
             acme.Remove(employees, jane);
 
-            Assert.Empty((IEnumerable<EmbeddedObject>)jane["OrganizationWhereEmployee"]!);
-            Assert.Empty((IEnumerable<EmbeddedObject>)john["OrganizationWhereEmployee"]!);
-            Assert.Empty((IEnumerable<EmbeddedObject>)jenny["OrganizationWhereEmployee"]!);
+            Assert.Empty((IEnumerable<EmbeddedObject>)jane["OrganizationsWhereEmployee"]!);
+            Assert.Empty((IEnumerable<EmbeddedObject>)john["OrganizationsWhereEmployee"]!);
+            Assert.Empty((IEnumerable<EmbeddedObject>)jenny["OrganizationsWhereEmployee"]!);
 
             Assert.Empty((IEnumerable<EmbeddedObject>)acme["Employees"]!);
             Assert.Empty((IEnumerable<EmbeddedObject>)hooli["Employees"]!);
@@ -210,15 +210,15 @@
 
             hooli.Add(employees, jane);
 
-            Assert.Equal(2, ((IEnumerable<EmbeddedObject>)jane["OrganizationWhereEmployee"]!).Count());
-            Assert.Contains(acme, (IEnumerable<EmbeddedObject>)jane["OrganizationWhereEmployee"]!);
-            Assert.Contains(hooli, (IEnumerable<EmbeddedObject>)jane["OrganizationWhereEmployee"]!);
+            Assert.Equal(2, ((IEnumerable<EmbeddedObject>)jane["OrganizationsWhereEmployee"]!).Count());
+            Assert.Contains(acme, (IEnumerable<EmbeddedObject>)jane["OrganizationsWhereEmployee"]!);
+            Assert.Contains(hooli, (IEnumerable<EmbeddedObject>)jane["OrganizationsWhereEmployee"]!);
 
-            Assert.Single((IEnumerable<EmbeddedObject>)john["OrganizationWhereEmployee"]!);
-            Assert.Contains(acme, (IEnumerable<EmbeddedObject>)john["OrganizationWhereEmployee"]!);
+            Assert.Single((IEnumerable<EmbeddedObject>)john["OrganizationsWhereEmployee"]!);
+            Assert.Contains(acme, (IEnumerable<EmbeddedObject>)john["OrganizationsWhereEmployee"]!);
 
-            Assert.Single((IEnumerable<EmbeddedObject>)jenny["OrganizationWhereEmployee"]!);
-            Assert.Contains(acme, (IEnumerable<EmbeddedObject>)jenny["OrganizationWhereEmployee"]!);
+            Assert.Single((IEnumerable<EmbeddedObject>)jenny["OrganizationsWhereEmployee"]!);
+            Assert.Contains(acme, (IEnumerable<EmbeddedObject>)jenny["OrganizationsWhereEmployee"]!);
 
             Assert.Equal(3, ((IEnumerable<EmbeddedObject>)acme["Employees"]!).Count());
             Assert.Contains(jane, (IEnumerable<EmbeddedObject>)acme["Employees"]!);
@@ -230,16 +230,16 @@
 
             hooli.Add(employees, john);
 
-            Assert.Equal(2, ((IEnumerable<EmbeddedObject>)jane["OrganizationWhereEmployee"]!).Count());
-            Assert.Contains(acme, (IEnumerable<EmbeddedObject>)jane["OrganizationWhereEmployee"]!);
-            Assert.Contains(hooli, (IEnumerable<EmbeddedObject>)jane["OrganizationWhereEmployee"]!);
+            Assert.Equal(2, ((IEnumerable<EmbeddedObject>)jane["OrganizationsWhereEmployee"]!).Count());
+            Assert.Contains(acme, (IEnumerable<EmbeddedObject>)jane["OrganizationsWhereEmployee"]!);
+            Assert.Contains(hooli, (IEnumerable<EmbeddedObject>)jane["OrganizationsWhereEmployee"]!);
 
-            Assert.Equal(2, ((IEnumerable<EmbeddedObject>)john["OrganizationWhereEmployee"]!).Count());
-            Assert.Contains(acme, (IEnumerable<EmbeddedObject>)john["OrganizationWhereEmployee"]!);
-            Assert.Contains(hooli, (IEnumerable<EmbeddedObject>)john["OrganizationWhereEmployee"]!);
+            Assert.Equal(2, ((IEnumerable<EmbeddedObject>)john["OrganizationsWhereEmployee"]!).Count());
+            Assert.Contains(acme, (IEnumerable<EmbeddedObject>)john["OrganizationsWhereEmployee"]!);
+            Assert.Contains(hooli, (IEnumerable<EmbeddedObject>)john["OrganizationsWhereEmployee"]!);
 
-            Assert.Single((IEnumerable<EmbeddedObject>)jenny["OrganizationWhereEmployee"]!);
-            Assert.Contains(acme, (IEnumerable<EmbeddedObject>)jenny["OrganizationWhereEmployee"]!);
+            Assert.Single((IEnumerable<EmbeddedObject>)jenny["OrganizationsWhereEmployee"]!);
+            Assert.Contains(acme, (IEnumerable<EmbeddedObject>)jenny["OrganizationsWhereEmployee"]!);
 
             Assert.Equal(3, ((IEnumerable<EmbeddedObject>)acme["Employees"]!).Count());
             Assert.Contains(jane, (IEnumerable<EmbeddedObject>)acme["Employees"]!);
@@ -252,17 +252,17 @@
 
             hooli.Add(employees, jenny);
 
-            Assert.Equal(2, ((IEnumerable<EmbeddedObject>)jane["OrganizationWhereEmployee"]!).Count());
-            Assert.Contains(acme, (IEnumerable<EmbeddedObject>)jane["OrganizationWhereEmployee"]!);
-            Assert.Contains(hooli, (IEnumerable<EmbeddedObject>)jane["OrganizationWhereEmployee"]!);
+            Assert.Equal(2, ((IEnumerable<EmbeddedObject>)jane["OrganizationsWhereEmployee"]!).Count());
+            Assert.Contains(acme, (IEnumerable<EmbeddedObject>)jane["OrganizationsWhereEmployee"]!);
+            Assert.Contains(hooli, (IEnumerable<EmbeddedObject>)jane["OrganizationsWhereEmployee"]!);
 
-            Assert.Equal(2, ((IEnumerable<EmbeddedObject>)john["OrganizationWhereEmployee"]!).Count());
-            Assert.Contains(acme, (IEnumerable<EmbeddedObject>)john["OrganizationWhereEmployee"]!);
-            Assert.Contains(hooli, (IEnumerable<EmbeddedObject>)john["OrganizationWhereEmployee"]!);
+            Assert.Equal(2, ((IEnumerable<EmbeddedObject>)john["OrganizationsWhereEmployee"]!).Count());
+            Assert.Contains(acme, (IEnumerable<EmbeddedObject>)john["OrganizationsWhereEmployee"]!);
+            Assert.Contains(hooli, (IEnumerable<EmbeddedObject>)john["OrganizationsWhereEmployee"]!);
 
-            Assert.Equal(2, ((IEnumerable<EmbeddedObject>)jenny["OrganizationWhereEmployee"]!).Count());
-            Assert.Contains(acme, (IEnumerable<EmbeddedObject>)jenny["OrganizationWhereEmployee"]!);
-            Assert.Contains(hooli, (IEnumerable<EmbeddedObject>)jenny["OrganizationWhereEmployee"]!);
+            Assert.Equal(2, ((IEnumerable<EmbeddedObject>)jenny["OrganizationsWhereEmployee"]!).Count());
+            Assert.Contains(acme, (IEnumerable<EmbeddedObject>)jenny["OrganizationsWhereEmployee"]!);
+            Assert.Contains(hooli, (IEnumerable<EmbeddedObject>)jenny["OrganizationsWhereEmployee"]!);
 
             Assert.Equal(3, ((IEnumerable<EmbeddedObject>)acme["Employees"]!).Count());
             Assert.Contains(jane, (IEnumerable<EmbeddedObject>)acme["Employees"]!);
@@ -292,8 +292,8 @@
 
             acme.Add(people, jane);
 
-            Assert.Single((IEnumerable<EmbeddedObject>)jane["OrganizationWherePerson"]!);
-            Assert.Contains(acme, (IEnumerable<EmbeddedObject>)jane["OrganizationWherePerson"]!);
+            Assert.Single((IEnumerable<EmbeddedObject>)jane["OrganizationsWherePerson"]!);
+            Assert.Contains(acme, (IEnumerable<EmbeddedObject>)jane["OrganizationsWherePerson"]!);
 
             Assert.Single((IEnumerable<EmbeddedObject>)acme["Persons"]!);
             Assert.Contains(jane, (IEnumerable<EmbeddedObject>)acme["Persons"]!);

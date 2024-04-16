@@ -311,16 +311,14 @@
         {
             this.CheckNames(associationType.SingularName, associationType.PluralName);
 
-            this.assignedAssociationTypeByName.Add(associationType.SingularName, associationType);
-            this.assignedAssociationTypeByName.Add(associationType.PluralName, associationType);
+            this.assignedAssociationTypeByName.Add(associationType.Name, associationType);
         }
 
         private void AddRoleType(IEmbeddedRoleType roleType)
         {
             this.CheckNames(roleType.SingularName, roleType.PluralName);
 
-            this.assignedRoleTypeByName.Add(roleType.SingularName, roleType);
-            this.assignedRoleTypeByName.Add(roleType.PluralName, roleType);
+            this.assignedRoleTypeByName.Add(roleType.Name, roleType);
         }
 
         private void CheckNames(string singularName, string pluralName)
