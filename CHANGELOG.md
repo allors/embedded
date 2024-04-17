@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.0.0] - 2024-04-17
+
 ### Added
 
 - **Breaking:** Change behavior of RoleTypeByName and AssociationTypeByName on EmbeddedObjectType (#4)
@@ -27,6 +29,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - initial upload
 
-[unreleased]: https://github.com/allors/embedded/compare/1.1.0...HEAD
+[unreleased]: https://github.com/allors/embedded/compare/2.0.0...HEAD
+[2.0.0]: https://github.com/allors/embedded/compare/1.1.0...2.0.0
 [1.1.0]: https://github.com/allors/embedded/compare/1.0.0...1.1.0
 [1.0.0]: https://github.com/allors/embedded/releases/tag/1.0.0
