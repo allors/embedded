@@ -49,6 +49,35 @@ diagram);
         }
 
         [Fact]
+        public void InheritedRoles()
+        {
+            var meta = new EmbeddedMeta();
+            var internalOrganization = meta.AddClass("InternalOrganization");
+            var organization = meta.AddClass("Organization");
+            var person = meta.AddClass("Person");
+
+            organization.AddDirectSupertype(internalOrganization);
+
+            meta.AddOneToMany(internalOrganization, person, "Employee");
+            meta.AddOneToMany(organization, person, "Customer");
+
+            var diagram = new ClassDiagram(meta).Render();
+
+            Assert.Equal(
+                """
+                classDiagram
+                    class InternalOrganization
+                    InternalOrganization o-- Person : Employees
+                    class Organization
+                    InternalOrganization <|-- Organization
+                    Organization o-- Person : Customers
+                    class Person
+
+                """,
+                diagram);
+        }
+
+        [Fact]
         public void Title()
         {
             var meta = new EmbeddedMeta();

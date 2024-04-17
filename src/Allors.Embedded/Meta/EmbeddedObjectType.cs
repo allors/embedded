@@ -6,8 +6,8 @@
 
     public sealed class EmbeddedObjectType
     {
-        private readonly Dictionary<string, IEmbeddedAssociationType> assignedAssociationTypeByName;
-        private readonly Dictionary<string, IEmbeddedRoleType> assignedRoleTypeByName;
+        private readonly Dictionary<string, IEmbeddedAssociationType> declaredAssociationTypeByName;
+        private readonly Dictionary<string, IEmbeddedRoleType> declaredRoleTypeByName;
         private readonly HashSet<EmbeddedObjectType> directSupertypes;
 
         private IDictionary<string, IEmbeddedAssociationType>? derivedAssociationTypeByName;
@@ -21,8 +21,8 @@
             this.Name = name;
 
             this.directSupertypes = [.. directSupertypes];
-            this.assignedAssociationTypeByName = [];
-            this.assignedRoleTypeByName = [];
+            this.declaredAssociationTypeByName = [];
+            this.declaredRoleTypeByName = [];
 
             this.Meta.ResetDerivations();
         }
@@ -61,14 +61,16 @@
             }
         }
 
+        public IReadOnlyDictionary<string, IEmbeddedAssociationType> DeclaredAssociationTypeByName => this.declaredAssociationTypeByName;
+
         public IDictionary<string, IEmbeddedAssociationType> AssociationTypeByName
         {
             get
             {
                 if (this.derivedAssociationTypeByName == null)
                 {
-                    this.derivedAssociationTypeByName = new Dictionary<string, IEmbeddedAssociationType>(this.assignedAssociationTypeByName);
-                    foreach (var item in this.Supertypes.SelectMany(v => v.assignedAssociationTypeByName))
+                    this.derivedAssociationTypeByName = new Dictionary<string, IEmbeddedAssociationType>(this.declaredAssociationTypeByName);
+                    foreach (var item in this.Supertypes.SelectMany(v => v.declaredAssociationTypeByName))
                     {
                         this.derivedAssociationTypeByName[item.Key] = item.Value;
                     }
@@ -77,6 +79,8 @@
                 return this.derivedAssociationTypeByName;
             }
         }
+
+        public IReadOnlyDictionary<string, IEmbeddedRoleType> DeclaredRoleTypeByName => this.declaredRoleTypeByName;
 
         public IDictionary<string, IEmbeddedRoleType> RoleTypeByName
         {
@@ -87,8 +91,8 @@
                     return this.derivedRoleTypeByName;
                 }
 
-                this.derivedRoleTypeByName = new Dictionary<string, IEmbeddedRoleType>(this.assignedRoleTypeByName);
-                foreach (var item in this.Supertypes.SelectMany(v => v.assignedRoleTypeByName))
+                this.derivedRoleTypeByName = new Dictionary<string, IEmbeddedRoleType>(this.declaredRoleTypeByName);
+                foreach (var item in this.Supertypes.SelectMany(v => v.declaredRoleTypeByName))
                 {
                     this.derivedRoleTypeByName[item.Key] = item.Value;
                 }
@@ -315,14 +319,14 @@
         {
             this.CheckNames(associationType.SingularName, associationType.PluralName);
 
-            this.assignedAssociationTypeByName.Add(associationType.Name, associationType);
+            this.declaredAssociationTypeByName.Add(associationType.Name, associationType);
         }
 
         private void AddRoleType(IEmbeddedRoleType roleType)
         {
             this.CheckNames(roleType.SingularName, roleType.PluralName);
 
-            this.assignedRoleTypeByName.Add(roleType.Name, roleType);
+            this.declaredRoleTypeByName.Add(roleType.Name, roleType);
         }
 
         private void CheckNames(string singularName, string pluralName)

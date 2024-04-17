@@ -33,8 +33,8 @@
                     diagram += $"    {directSuperType.Name} <|-- {composite.Name}\r\n";
                 }
 
-                var roleTypes = composite.RoleTypeByName.Values.OrderBy(v => v.Name);
-                foreach (var roleType in roleTypes)
+                var declaredRoleTypes = composite.DeclaredRoleTypeByName.Values.OrderBy(v => v.Name);
+                foreach (var roleType in declaredRoleTypes)
                 {
                     if (roleType is EmbeddedUnitRoleType)
                     {
