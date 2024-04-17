@@ -44,6 +44,8 @@
 
         public Type? Type { get; }
 
+        public IReadOnlySet<EmbeddedObjectType> DirectSupertypes => this.directSupertypes;
+
         public IReadOnlySet<EmbeddedObjectType> Supertypes
         {
             get
@@ -94,6 +96,8 @@
                 return this.derivedRoleTypeByName;
             }
         }
+
+        public override string ToString() => this.Name;
 
         public void AddDirectSupertype(EmbeddedObjectType directSupertype)
         {

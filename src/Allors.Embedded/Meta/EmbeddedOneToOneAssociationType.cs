@@ -1,7 +1,5 @@
 ﻿namespace Allors.Embedded.Meta
 {
-    using System.Runtime.InteropServices.Marshalling;
-
     public sealed class EmbeddedOneToOneAssociationType : IEmbeddedOneToAssociationType
     {
         internal EmbeddedOneToOneAssociationType(EmbeddedObjectType objectType, EmbeddedOneToOneRoleType roleType, string singularName, string pluralName, string name)

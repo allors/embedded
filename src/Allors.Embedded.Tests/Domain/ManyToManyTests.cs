@@ -6,6 +6,7 @@
     using System.Linq;
     using Allors.Embedded.Domain;
     using Allors.Embedded.Meta;
+    using Allors.Embedded.Meta.Diagrams;
     using Xunit;
     using EmbeddedObject = Allors.Embedded.Domain.EmbeddedObject;
 
@@ -19,6 +20,8 @@
             var person = meta.AddClass("Person");
             var name = meta.AddUnit<string>(organization, "Name");
             var (employees, organizationWhereEmployee) = meta.AddManyToMany(organization, person, "Employee");
+
+            var diagram = new ClassDiagram(meta).Render();
 
             var population = new EmbeddedPopulation();
 
