@@ -11,69 +11,76 @@
     </ShowAsCollectionAssociation>
   </Class>
   <Class Name="Allors.Embedded.Meta.EmbeddedObjectType">
-    <Position X="4.5" Y="1.25" Width="2.5" />
+    <Position X="4.5" Y="1.25" Width="2.75" />
     <TypeIdentifier>
-      <HashCode>QgQEAAAAAADQIARAAGAIABQQAYAABIgAAQAAgAAAACA=</HashCode>
+      <HashCode>QgQAQAAAAUBQAAREAGAIABQAAYAQBIgAAQAAgAAAQDA=</HashCode>
       <FileName>Meta\EmbeddedObjectType.cs</FileName>
     </TypeIdentifier>
     <ShowAsCollectionAssociation>
-      <Field Name="assignedAssociationTypeByName" />
-      <Field Name="assignedRoleTypeByName" />
+      <Field Name="directSupertypes" />
+      <Field Name="declaredAssociationTypeByName" />
+      <Field Name="declaredRoleTypeByName" />
     </ShowAsCollectionAssociation>
   </Class>
   <Interface Name="Allors.Embedded.Meta.IEmbeddedAssociationType">
-    <Position X="9.5" Y="1.25" Width="2" />
+    <Position X="9.75" Y="1.25" Width="2.25" />
     <TypeIdentifier>
       <HashCode>AAIAAAAAAAAAAAIAAAAAAAQAAAAAAAACAIAAAAAAAAA=</HashCode>
       <FileName>Meta\IEmbeddedAssociationType.cs</FileName>
     </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="RoleType" />
+    </ShowAsAssociation>
   </Interface>
   <Interface Name="Allors.Embedded.Meta.IEmbeddedRoleType">
-    <Position X="15.25" Y="0.75" Width="1.75" />
+    <Position X="15.75" Y="0.75" Width="1.75" />
     <TypeIdentifier>
-      <HashCode>AAAAiAAAAAAAAAIAEAAAgAQAgCAAAAACAIAAAAAAAAA=</HashCode>
+      <HashCode>AAAAAAAAAAAAAAIAAAAAgAQAgAAAAAACAIAAAAAAAAA=</HashCode>
       <FileName>Meta\IEmbeddedRoleType.cs</FileName>
     </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="AssociationType" />
+    </ShowAsAssociation>
   </Interface>
   <Interface Name="Allors.Embedded.Meta.IEmbeddedCompositeAssociationType">
-    <Position X="9.25" Y="4" Width="2.75" />
+    <Position X="9.5" Y="4" Width="2.75" />
     <TypeIdentifier>
-      <HashCode>AAAAiAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <HashCode>AAIAiAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>Meta\IEmbeddedCompositeAssociationType.cs</FileName>
     </TypeIdentifier>
   </Interface>
   <Interface Name="Allors.Embedded.Meta.IEmbeddedManyToAssociationType" Collapsed="true">
-    <Position X="10.75" Y="6.25" Width="2.5" />
+    <Position X="10.75" Y="6.25" Width="2.75" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>Meta\IEmbeddedManyToAssociationType.cs</FileName>
     </TypeIdentifier>
   </Interface>
   <Interface Name="Allors.Embedded.Meta.IEmbeddedOneToAssociationType" Collapsed="true">
-    <Position X="8.25" Y="6.25" Width="2.25" />
+    <Position X="8.25" Y="6.25" Width="2.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>Meta\IEmbeddedOneToAssociationType.cs</FileName>
     </TypeIdentifier>
   </Interface>
   <Interface Name="Allors.Embedded.Meta.IEmbeddedCompositeRoleType">
-    <Position X="15" Y="4.25" Width="2.25" />
+    <Position X="15.5" Y="4.25" Width="2.5" />
     <TypeIdentifier>
-      <HashCode>AAAAiAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <HashCode>AAAAiAAAAAAAAAAAAAAAAAAAgAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>Meta\IEmbeddedCompositeRoleType.cs</FileName>
     </TypeIdentifier>
   </Interface>
   <Interface Name="Allors.Embedded.Meta.IEmbeddedToManyRoleType" Collapsed="true">
-    <Position X="16.5" Y="6.25" Width="2" />
+    <Position X="17" Y="6.25" Width="2.25" />
     <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <HashCode>AAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>Meta\IEmbeddedToManyRoleType.cs</FileName>
     </TypeIdentifier>
   </Interface>
   <Interface Name="Allors.Embedded.Meta.IEmbeddedToOneRoleType" Collapsed="true">
-    <Position X="14" Y="6.25" Width="2" />
+    <Position X="14.5" Y="6.25" Width="2.25" />
     <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <HashCode>AAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>Meta\IEmbeddedToOneRoleType.cs</FileName>
     </TypeIdentifier>
   </Interface>

@@ -112,25 +112,13 @@
             set => this.Population.SetUnitRole(this, roleType, value);
         }
 
-        public EmbeddedObject? this[EmbeddedOneToOneRoleType roleType]
+        public EmbeddedObject? this[IEmbeddedToOneRoleType roleType]
         {
             get => (EmbeddedObject?)this.Population.GetRole(this, roleType);
             set => this.Population.SetToOneRole(this, roleType, value);
         }
 
-        public EmbeddedObject? this[EmbeddedManyToOneRoleType roleType]
-        {
-            get => (EmbeddedObject?)this.Population.GetRole(this, roleType);
-            set => this.Population.SetToOneRole(this, roleType, value);
-        }
-
-        public IReadOnlySet<EmbeddedObject> this[EmbeddedOneToManyRoleType roleType]
-        {
-            get => (IReadOnlySet<EmbeddedObject>?)this.Population.GetRole(this, roleType) ?? ImmutableHashSet<EmbeddedObject>.Empty;
-            set => this.Population.SetToManyRole(this, roleType, value);
-        }
-
-        public IReadOnlySet<EmbeddedObject> this[EmbeddedManyToManyRoleType roleType]
+        public IReadOnlySet<EmbeddedObject> this[IEmbeddedToManyRoleType roleType]
         {
             get => (IReadOnlySet<EmbeddedObject>?)this.Population.GetRole(this, roleType) ?? ImmutableHashSet<EmbeddedObject>.Empty;
             set => this.Population.SetToManyRole(this, roleType, value);
@@ -143,24 +131,20 @@
             _ => throw new InvalidOperationException(),
         };
 
-        public EmbeddedObject? this[EmbeddedOneToOneAssociationType associationType] => (EmbeddedObject?)this.Population.GetAssociation(this, associationType);
+        public EmbeddedObject? this[IEmbeddedOneToAssociationType associationType] => (EmbeddedObject?)this.Population.GetAssociation(this, associationType);
 
-        public EmbeddedObject? this[EmbeddedOneToManyAssociationType associationType] => (EmbeddedObject?)this.Population.GetAssociation(this, associationType);
+        public IReadOnlySet<EmbeddedObject> this[IEmbeddedManyToAssociationType associationType] => (IReadOnlySet<EmbeddedObject>?)this.Population.GetAssociation(this, associationType) ?? ImmutableHashSet<EmbeddedObject>.Empty;
 
-        public IReadOnlySet<EmbeddedObject> this[EmbeddedManyToOneAssociationType associationType] => (IReadOnlySet<EmbeddedObject>?)this.Population.GetAssociation(this, associationType) ?? ImmutableHashSet<EmbeddedObject>.Empty;
+        public void Add(IEmbeddedToManyRoleType roleType, EmbeddedObject item) => this.Population.AddRole(this, roleType, item);
 
-        public IReadOnlySet<EmbeddedObject> this[EmbeddedManyToManyAssociationType associationType] => (IReadOnlySet<EmbeddedObject>?)this.Population.GetAssociation(this, associationType) ?? ImmutableHashSet<EmbeddedObject>.Empty;
+        public void Add(IEmbeddedToManyRoleType roleType, params EmbeddedObject[] items) => this.Population.AddRole(this, roleType, items);
 
-        public void Add(IEmbeddedToManyRoleType roleType, EmbeddedObject item) => this.Population.AddToRole(this, roleType, item);
+        public void Add(IEmbeddedToManyRoleType roleType, IEnumerable<EmbeddedObject> items) => this.Population.AddRole(this, roleType, items as EmbeddedObject[] ?? items.ToArray());
 
-        public void Add(IEmbeddedToManyRoleType roleType, params EmbeddedObject[] items) => this.Population.AddToRole(this, roleType, items);
+        public void Remove(IEmbeddedToManyRoleType roleType, EmbeddedObject item) => this.Population.RemoveRole(this, roleType, item);
 
-        public void Add(IEmbeddedToManyRoleType roleType, IEnumerable<EmbeddedObject> items) => this.Population.AddToRole(this, roleType, items as EmbeddedObject[] ?? items.ToArray());
+        public void Remove(IEmbeddedToManyRoleType roleType, params EmbeddedObject[] items) => this.Population.RemoveRole(this, roleType, items);
 
-        public void Remove(IEmbeddedToManyRoleType roleType, EmbeddedObject item) => this.Population.RemoveFromRole(this, roleType, item);
-
-        public void Remove(IEmbeddedToManyRoleType roleType, params EmbeddedObject[] items) => this.Population.RemoveFromRole(this, roleType, items);
-
-        public void Remove(IEmbeddedToManyRoleType roleType, IEnumerable<EmbeddedObject> items) => this.Population.RemoveFromRole(this, roleType, items as EmbeddedObject[] ?? items.ToArray());
+        public void Remove(IEmbeddedToManyRoleType roleType, IEnumerable<EmbeddedObject> items) => this.Population.RemoveRole(this, roleType, items as EmbeddedObject[] ?? items.ToArray());
     }
 }

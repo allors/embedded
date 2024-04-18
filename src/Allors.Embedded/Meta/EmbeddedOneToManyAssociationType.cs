@@ -13,6 +13,8 @@
 
         IEmbeddedRoleType IEmbeddedAssociationType.RoleType => this.RoleType;
 
+        IEmbeddedCompositeRoleType IEmbeddedCompositeAssociationType.RoleType => this.RoleType;
+
         public EmbeddedOneToManyRoleType RoleType { get; }
 
         public EmbeddedObjectType ObjectType { get; }

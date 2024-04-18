@@ -12,6 +12,8 @@
 
         IEmbeddedAssociationType IEmbeddedRoleType.AssociationType => this.AssociationType;
 
+        IEmbeddedCompositeAssociationType IEmbeddedCompositeRoleType.AssociationType => this.AssociationType;
+
         public EmbeddedManyToOneAssociationType AssociationType { get; internal set; } = null!;
 
         public EmbeddedObjectType ObjectType { get; }

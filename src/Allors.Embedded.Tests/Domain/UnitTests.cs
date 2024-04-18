@@ -32,11 +32,11 @@
         }
 
         [Fact]
-        public void PropertySet()
+        public void PropertySetByString()
         {
             var meta = new EmbeddedMeta();
             var person = meta.AddClass("Person");
-            meta.AddUnit<string>(person, "FirstName");
+            var unitRoleType = meta.AddUnit<string>(person, "FirstName");
 
             var population = new EmbeddedPopulation();
 
@@ -48,6 +48,43 @@
 
             Assert.Equal("John", john["FirstName"]);
             Assert.Equal("Jane", jane["FirstName"]);
+            Assert.Equal("John", john[unitRoleType]);
+            Assert.Equal("Jane", jane[unitRoleType]);
+
+            jane["FirstName"] = null;
+
+            Assert.Equal("John", john["FirstName"]);
+            Assert.Null(jane["FirstName"]);
+            Assert.Equal("John", john[unitRoleType]);
+            Assert.Null(jane[unitRoleType]);
+        }
+
+        [Fact]
+        public void PropertySetByUnitRoleType()
+        {
+            var meta = new EmbeddedMeta();
+            var person = meta.AddClass("Person");
+            var unitRoleType = meta.AddUnit<string>(person, "FirstName");
+
+            var population = new EmbeddedPopulation();
+
+            var john = population.Create(person);
+            var jane = population.Create(person);
+
+            john[unitRoleType] = "John";
+            jane[unitRoleType] = "Jane";
+
+            Assert.Equal("John", john["FirstName"]);
+            Assert.Equal("Jane", jane["FirstName"]);
+            Assert.Equal("John", john[unitRoleType]);
+            Assert.Equal("Jane", jane[unitRoleType]);
+
+            jane[unitRoleType] = null;
+
+            Assert.Equal("John", john["FirstName"]);
+            Assert.Null(jane["FirstName"]);
+            Assert.Equal("John", john[unitRoleType]);
+            Assert.Null(jane[unitRoleType]);
         }
     }
 }

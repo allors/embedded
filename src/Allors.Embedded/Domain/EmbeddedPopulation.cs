@@ -162,13 +162,13 @@
             return role;
         }
 
-        internal void SetUnitRole(EmbeddedObject association, IEmbeddedRoleType roleType, object? role)
+        internal void SetUnitRole(EmbeddedObject association, EmbeddedUnitRoleType roleType, object? role)
         {
             var normalizedRole = roleType.Normalize(role);
 
             if (normalizedRole == null)
             {
-                this.RemoveFromRole(association, roleType);
+                this.RemoveUnitRole(association, roleType);
                 return;
             }
 
@@ -176,17 +176,17 @@
             this.ChangedRoleByAssociation(roleType)[association] = normalizedRole;
         }
 
-        internal void SetToOneRole(EmbeddedObject association, IEmbeddedRoleType roleType, object? role)
+        internal void SetToOneRole(EmbeddedObject association, IEmbeddedToOneRoleType roleType, object? role)
         {
             var normalizedRole = roleType.Normalize(role);
 
             if (normalizedRole == null)
             {
-                this.RemoveFromRole(association, roleType);
+                this.RemoveCompositeRole(association, roleType);
                 return;
             }
 
-            var associationType = (IEmbeddedCompositeAssociationType)roleType.AssociationType;
+            var associationType = roleType.AssociationType;
             var previousRole = this.GetRole(association, roleType);
 
             var roleObject = (EmbeddedObject)normalizedRole;
@@ -227,13 +227,13 @@
             }
         }
 
-        internal void SetToManyRole(EmbeddedObject association, IEmbeddedRoleType roleType, object? role)
+        internal void SetToManyRole(EmbeddedObject association, IEmbeddedToManyRoleType roleType, object? role)
         {
             var normalizedRole = roleType.Normalize(role);
 
             if (normalizedRole == null)
             {
-                this.RemoveFromRole(association, roleType);
+                this.RemoveCompositeRole(association, roleType);
                 return;
             }
 
@@ -250,26 +250,26 @@
 
                 foreach (var addedRole in addedRoles)
                 {
-                    this.AddToRole(association, roleType, addedRole);
+                    this.AddRole(association, roleType, addedRole);
                 }
 
                 foreach (var removeRole in removedRoles)
                 {
-                    this.RemoveFromRole(association, roleType, removeRole);
+                    this.RemoveRole(association, roleType, removeRole);
                 }
             }
             else
             {
                 foreach (var addedRole in roles)
                 {
-                    this.AddToRole(association, roleType, addedRole);
+                    this.AddRole(association, roleType, addedRole);
                 }
             }
         }
 
-        internal void AddToRole(EmbeddedObject association, IEmbeddedRoleType roleType, EmbeddedObject item)
+        internal void AddRole(EmbeddedObject association, IEmbeddedToManyRoleType roleType, EmbeddedObject item)
         {
-            var associationType = (IEmbeddedCompositeAssociationType)roleType.AssociationType;
+            var associationType = roleType.AssociationType;
 
             // Role
             var changedRoleByAssociation = this.ChangedRoleByAssociation(roleType);
@@ -304,14 +304,14 @@
             }
         }
 
-        internal void AddToRole(EmbeddedObject association, IEmbeddedRoleType roleType, EmbeddedObject[]? items)
+        internal void AddRole(EmbeddedObject association, IEmbeddedToManyRoleType roleType, EmbeddedObject[]? items)
         {
             if (items == null || items.Length == 0)
             {
                 return;
             }
 
-            var associationType = (IEmbeddedCompositeAssociationType)roleType.AssociationType;
+            var associationType = roleType.AssociationType;
 
             // Role
             var changedRoleByAssociation = this.ChangedRoleByAssociation(roleType);
@@ -348,9 +348,9 @@
             }
         }
 
-        internal void RemoveFromRole(EmbeddedObject association, IEmbeddedRoleType roleType, EmbeddedObject item)
+        internal void RemoveRole(EmbeddedObject association, IEmbeddedToManyRoleType roleType, EmbeddedObject item)
         {
-            var associationType = (IEmbeddedCompositeAssociationType)roleType.AssociationType;
+            var associationType = roleType.AssociationType;
 
             var previousRole = (IImmutableSet<EmbeddedObject>?)this.GetRole(association, roleType);
             if (previousRole?.Contains(item) == true)
@@ -379,14 +379,14 @@
             }
         }
 
-        internal void RemoveFromRole(EmbeddedObject association, IEmbeddedRoleType roleType, EmbeddedObject[]? items)
+        internal void RemoveRole(EmbeddedObject association, IEmbeddedToManyRoleType roleType, EmbeddedObject[]? items)
         {
             if (items == null || items.Length == 0)
             {
                 return;
             }
 
-            var associationType = (IEmbeddedCompositeAssociationType)roleType.AssociationType;
+            var associationType = roleType.AssociationType;
 
             var previousRole = (IImmutableSet<EmbeddedObject>?)this.GetRole(association, roleType);
             if (previousRole?.Overlaps(items) == true)
@@ -496,9 +496,20 @@
             return changedRoleByAssociation;
         }
 
-        private void RemoveFromRole(EmbeddedObject association, IEmbeddedRoleType roleType)
+        private void RemoveUnitRole(EmbeddedObject association, EmbeddedUnitRoleType roleType)
         {
-            var associationType = (IEmbeddedCompositeAssociationType)roleType.AssociationType;
+            var previousRole = this.GetRole(association, roleType);
+            if (previousRole != null)
+            {
+                // Role
+                var changedRoleByAssociation = this.ChangedRoleByAssociation(roleType);
+                changedRoleByAssociation.Remove(association);
+            }
+        }
+
+        private void RemoveCompositeRole(EmbeddedObject association, IEmbeddedCompositeRoleType roleType)
+        {
+            var associationType = roleType.AssociationType;
 
             var previousRole = (IImmutableSet<EmbeddedObject>?)this.GetRole(association, roleType);
             if (previousRole != null)
