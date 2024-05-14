@@ -6,9 +6,9 @@
     using System.Linq;
     using Allors.Embedded.Meta;
 
-    public sealed class EmbeddedObject
+    public abstract class EmbeddedObject
     {
-        internal EmbeddedObject(EmbeddedPopulation population, EmbeddedObjectType objectType)
+        protected EmbeddedObject(EmbeddedPopulation population, EmbeddedObjectType objectType)
         {
             this.Population = population;
             this.ObjectType = objectType;

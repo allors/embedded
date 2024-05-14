@@ -7,7 +7,7 @@
     using System.Linq;
     using Allors.Embedded.Meta;
 
-    public sealed class EmbeddedPopulation
+    public sealed class EmbeddedPopulation(EmbeddedMeta meta)
     {
         private readonly Dictionary<IEmbeddedRoleType, Dictionary<EmbeddedObject, object>> roleByAssociationByRoleType = [];
         private readonly Dictionary<IEmbeddedCompositeAssociationType, Dictionary<EmbeddedObject, object>> associationByRoleByAssociationType = [];
@@ -17,13 +17,37 @@
 
         private IImmutableList<EmbeddedObject> objects = ImmutableArray<EmbeddedObject>.Empty;
 
+        public EmbeddedMeta Meta { get; } = meta;
+
         public Dictionary<string, IEmbeddedDerivation> DerivationById { get; } = [];
 
         public IReadOnlyList<EmbeddedObject> Objects => this.objects;
 
         public EmbeddedObject Create(EmbeddedObjectType @class, params Action<EmbeddedObject>[] builders)
         {
-            var @new = new EmbeddedObject(this, @class);
+            var @new = @class.Type != null ? (EmbeddedObject)Activator.CreateInstance(@class.Type, this, @class)! : new DynamicEmbeddedObject(this, @class);
+            this.objects = this.objects.Add(@new);
+
+            foreach (var builder in builders)
+            {
+                builder(@new);
+            }
+
+            return @new;
+        }
+
+        public EmbeddedObject Create<T>(params Action<T>[] builders)
+            where T : EmbeddedObject
+        {
+            string className = typeof(T).Name;
+            var @class = this.Meta.ObjectTypeByName[className] ?? throw new ArgumentException($"Class with name {className} not found");
+
+            if (@class.Type == null)
+            {
+                throw new ArgumentException("Class has no static type");
+            }
+
+            var @new = (T)Activator.CreateInstance(@class.Type, this, @class)!;
             this.objects = this.objects.Add(@new);
 
             foreach (var builder in builders)

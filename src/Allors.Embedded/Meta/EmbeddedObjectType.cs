@@ -14,21 +14,20 @@
         private IDictionary<string, IEmbeddedRoleType>? derivedRoleTypeByName;
         private HashSet<EmbeddedObjectType>? derivedSupertypes;
 
-        internal EmbeddedObjectType(EmbeddedMeta meta, EmbeddedObjectTypeKind kind, string name, EmbeddedObjectType[] directSupertypes)
+        internal EmbeddedObjectType(EmbeddedMeta meta, EmbeddedObjectTypeKind kind, string name)
         {
             this.Meta = meta;
             this.Kind = kind;
             this.Name = name;
-
-            this.directSupertypes = [.. directSupertypes];
+            this.directSupertypes = [];
             this.declaredAssociationTypeByName = [];
             this.declaredRoleTypeByName = [];
 
             this.Meta.ResetDerivations();
         }
 
-        internal EmbeddedObjectType(EmbeddedMeta meta, Type type)
-            : this(meta, EmbeddedObjectTypeKind.Unit, type.Name, [])
+        internal EmbeddedObjectType(EmbeddedMeta meta, EmbeddedObjectTypeKind kind, Type type)
+            : this(meta, kind, type.Name)
         {
             this.Type = type;
             this.TypeCode = Type.GetTypeCode(type);
@@ -40,9 +39,9 @@
 
         public string Name { get; }
 
-        public TypeCode? TypeCode { get; }
-
         public Type? Type { get; }
+
+        public TypeCode? TypeCode { get; }
 
         public IReadOnlySet<EmbeddedObjectType> DirectSupertypes => this.directSupertypes;
 

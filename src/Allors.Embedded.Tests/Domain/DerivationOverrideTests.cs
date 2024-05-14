@@ -19,7 +19,7 @@
             meta.AddUnit<DateTime>(person, "DerivedAt");
             meta.AddUnit<string>(person, "Greeting");
 
-            var population = new EmbeddedPopulation
+            var population = new EmbeddedPopulation(meta)
             {
                 DerivationById =
                 {

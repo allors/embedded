@@ -15,7 +15,7 @@
             var firstName = meta.AddUnit<string>(person, "FirstName");
             var lastName = meta.AddUnit<string>(person, "LastName");
 
-            var population = new EmbeddedPopulation();
+            var population = new EmbeddedPopulation(meta);
 
             var john = population.Create(person);
             var jane = population.Create(person);
@@ -58,7 +58,7 @@
             meta.AddUnit<string>(organization, "Name");
             (EmbeddedManyToManyRoleType employees, _) = meta.AddManyToMany(organization, person, "Employee");
 
-            var population = new EmbeddedPopulation();
+            var population = new EmbeddedPopulation(meta);
 
             var john = population.Create(person);
             var jane = population.Create(person);

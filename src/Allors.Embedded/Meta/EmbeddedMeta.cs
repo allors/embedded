@@ -27,17 +27,41 @@
 
         public EmbeddedManyToManyRoleType AddManyToMany(EmbeddedObjectType associationObjectType, EmbeddedObjectType roleObjectType, string? roleName = null, string? associationName = null) => associationObjectType.AddManyToMany(roleObjectType, roleName, associationName);
 
-        public EmbeddedObjectType AddInterface(string name, params EmbeddedObjectType[] supertypes)
+        public EmbeddedObjectType AddInterface(string name, params EmbeddedObjectType[] directSupertypes)
         {
-            var objectType = new EmbeddedObjectType(this, EmbeddedObjectTypeKind.Interface, name, supertypes);
+            var objectType = new EmbeddedObjectType(this, EmbeddedObjectTypeKind.Interface, name);
             this.objectTypeByName.Add(objectType.Name, objectType);
+            foreach (var superType in directSupertypes)
+            {
+                objectType.AddDirectSupertype(superType);
+            }
+
             return objectType;
         }
 
-        public EmbeddedObjectType AddClass(string name, params EmbeddedObjectType[] supertypes)
+        public EmbeddedObjectType AddClass(string name, params EmbeddedObjectType[] directSupertypes)
         {
-            var objectType = new EmbeddedObjectType(this, EmbeddedObjectTypeKind.Class, name, supertypes);
+            var objectType = new EmbeddedObjectType(this, EmbeddedObjectTypeKind.Class, name);
             this.objectTypeByName.Add(objectType.Name, objectType);
+            foreach (var superType in directSupertypes)
+            {
+                objectType.AddDirectSupertype(superType);
+            }
+
+            return objectType;
+        }
+
+        public EmbeddedObjectType AddClass<T>(params EmbeddedObjectType[] directSupertypes) => this.AddClass(typeof(T), directSupertypes);
+
+        public EmbeddedObjectType AddClass(Type type, params EmbeddedObjectType[] directSupertypes)
+        {
+            var objectType = new EmbeddedObjectType(this, EmbeddedObjectTypeKind.Class, type);
+            this.objectTypeByName.Add(objectType.Name, objectType);
+            foreach (var superType in directSupertypes)
+            {
+                objectType.AddDirectSupertype(superType);
+            }
+
             return objectType;
         }
 
@@ -97,7 +121,7 @@
         {
             if (!this.ObjectTypeByName.TryGetValue(type.Name, out var objectType))
             {
-                objectType = new EmbeddedObjectType(this, type);
+                objectType = new EmbeddedObjectType(this, EmbeddedObjectTypeKind.Unit, type);
                 this.objectTypeByName.Add(objectType.Name, objectType);
             }
 

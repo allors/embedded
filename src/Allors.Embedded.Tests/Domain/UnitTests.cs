@@ -15,7 +15,7 @@
             meta.AddUnit<string>(c1, "Same");
             meta.AddUnit<string>(c2, "Same");
 
-            var population = new EmbeddedPopulation();
+            var population = new EmbeddedPopulation(meta);
 
             var c1a = population.Create(c1, v =>
             {
@@ -38,7 +38,7 @@
             var person = meta.AddClass("Person");
             var unitRoleType = meta.AddUnit<string>(person, "FirstName");
 
-            var population = new EmbeddedPopulation();
+            var population = new EmbeddedPopulation(meta);
 
             var john = population.Create(person);
             var jane = population.Create(person);
@@ -66,7 +66,7 @@
             var person = meta.AddClass("Person");
             var unitRoleType = meta.AddUnit<string>(person, "FirstName");
 
-            var population = new EmbeddedPopulation();
+            var population = new EmbeddedPopulation(meta);
 
             var john = population.Create(person);
             var jane = population.Create(person);

@@ -15,7 +15,7 @@
             meta.AddUnit<string>(person, "FirstName");
             meta.AddUnit<string>(person, "LastName");
 
-            var population = new EmbeddedPopulation();
+            var population = new EmbeddedPopulation(meta);
 
             EmbeddedObject NewPerson(string firstName, string lastName)
             {

@@ -16,7 +16,7 @@
             meta.AddUnit<string>(named, "Name");
             meta.AddOneToOne(organization, person, "Owner");
 
-            var population = new EmbeddedPopulation();
+            var population = new EmbeddedPopulation(meta);
 
             var acme = population.Create(organization, v =>
             {

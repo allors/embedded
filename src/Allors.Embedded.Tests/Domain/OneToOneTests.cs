@@ -17,7 +17,7 @@
             meta.AddOneToOne(organization, person, "Owner");
             meta.AddOneToOne(organization, named, "Named");
 
-            var population = new EmbeddedPopulation();
+            var population = new EmbeddedPopulation(meta);
 
             var acme = population.Create(organization);
             var gizmo = population.Create(organization);
@@ -50,7 +50,7 @@
             var person = meta.AddClass("Person");
             var (owner, property) = meta.AddOneToOne(organization, person, "Owner");
 
-            var population = new EmbeddedPopulation();
+            var population = new EmbeddedPopulation(meta);
 
             var acme = population.Create(organization);
             var gizmo = population.Create(organization);
@@ -87,7 +87,7 @@
             var person = meta.AddClass("Person");
             var (owner, property) = meta.AddOneToOne(organization, person, "Owner");
 
-            var population = new EmbeddedPopulation();
+            var population = new EmbeddedPopulation(meta);
 
             var acme = population.Create(organization);
             var gizmo = population.Create(organization);
@@ -126,7 +126,7 @@
             var person = meta.AddClass("Person");
             var (owner, property) = meta.AddOneToOne(organization, person, "Owner");
 
-            var population = new EmbeddedPopulation();
+            var population = new EmbeddedPopulation(meta);
 
             var acme = population.Create(organization);
             var gizmo = population.Create(organization);
@@ -165,7 +165,7 @@
             var person = meta.AddClass("Person");
             meta.AddOneToOne(organization, person);
 
-            var population = new EmbeddedPopulation();
+            var population = new EmbeddedPopulation(meta);
 
             var acme = population.Create(organization);
 

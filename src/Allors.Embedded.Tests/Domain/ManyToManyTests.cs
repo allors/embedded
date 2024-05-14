@@ -8,7 +8,6 @@
     using Allors.Embedded.Meta;
     using Allors.Embedded.Meta.Diagrams;
     using Xunit;
-    using EmbeddedObject = Allors.Embedded.Domain.EmbeddedObject;
 
     public class ManyToManyTests
     {
@@ -23,7 +22,7 @@
 
             var diagram = new ClassDiagram(meta).Render();
 
-            var population = new EmbeddedPopulation();
+            var population = new EmbeddedPopulation(meta);
 
             var acme = population.Create(organization, v => v[name] = "Acme");
             var hooli = population.Create(organization, v => v[name] = "Hooli");
@@ -62,7 +61,7 @@
             var name = meta.AddUnit<string>(organization, "Name");
             (EmbeddedManyToManyRoleType employees, _) = meta.AddManyToMany(organization, person, "Employee");
 
-            var population = new EmbeddedPopulation();
+            var population = new EmbeddedPopulation(meta);
 
             var acme = population.Create(organization, v => v[name] = "Acme");
             var hooli = population.Create(organization, v => v[name] = "Hooli");
@@ -138,7 +137,7 @@
             meta.AddUnit<string>(organization, "Name");
             (EmbeddedManyToManyRoleType employees, _) = meta.AddManyToMany(organization, person, "Employee");
 
-            var population = new EmbeddedPopulation();
+            var population = new EmbeddedPopulation(meta);
 
             var acme = population.Create(organization, v => v["Name"] = "Acme");
             var hooli = population.Create(organization, v => v["Name"] = "Hooli");
@@ -198,7 +197,7 @@
             meta.AddUnit<string>(organization, "Name");
             (EmbeddedManyToManyRoleType employees, _) = meta.AddManyToMany(organization, person, "Employee");
 
-            var population = new EmbeddedPopulation();
+            var population = new EmbeddedPopulation(meta);
 
             var acme = population.Create(organization, v => v["Name"] = "Acme");
             var hooli = population.Create(organization, v => v["Name"] = "Hooli");
@@ -287,7 +286,7 @@
             meta.AddUnit<string>(organization, "Name");
             (EmbeddedManyToManyRoleType people, _) = meta.AddManyToMany(organization, person);
 
-            var population = new EmbeddedPopulation();
+            var population = new EmbeddedPopulation(meta);
 
             var acme = population.Create(organization, v => v["Name"] = "Acme");
 

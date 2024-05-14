@@ -15,10 +15,10 @@
             var person = meta.AddClass("Person");
             var firstName = meta.AddUnit<string>(person, "FirstName");
             var lastName = meta.AddUnit<string>(person, "LastName");
-            meta.AddUnit<string>(person, "FullName");
+            var fullName = meta.AddUnit<string>(person, "FullName");
             meta.AddUnit<DateTime>(person, "DerivedAt");
 
-            var population = new EmbeddedPopulation
+            var population = new EmbeddedPopulation(meta)
             {
                 DerivationById =
                 {
@@ -27,22 +27,22 @@
             };
 
             var john = population.Create(person);
-            john["FirstName"] = "John";
-            john["LastName"] = "Doe";
+            john[firstName] = "John";
+            john[lastName] = "Doe";
 
             population.Derive();
 
-            Assert.Equal("John Doe", john["FullName"]);
+            Assert.Equal("John Doe", john[fullName]);
 
             population.DerivationById["FullName"] = new GreetingDerivation(population.DerivationById["FullName"], firstName, lastName);
 
             var jane = population.Create(person);
-            jane["FirstName"] = "Jane";
-            jane["LastName"] = "Doe";
+            jane[firstName] = "Jane";
+            jane[lastName] = "Doe";
 
             population.Derive();
 
-            Assert.Equal("Jane Doe Chained", jane["FullName"]);
+            Assert.Equal("Jane Doe Chained", jane[fullName]);
         }
 
         private class FullNameDerivation(IEmbeddedRoleType firstName, IEmbeddedRoleType lastName) : IEmbeddedDerivation

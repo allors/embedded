@@ -6,7 +6,6 @@
     using Allors.Embedded.Domain;
     using Allors.Embedded.Meta;
     using Xunit;
-    using EmbeddedObject = Allors.Embedded.Domain.EmbeddedObject;
 
     public class OneToManyTests
     {
@@ -18,7 +17,7 @@
             var person = meta.AddClass("Person");
             (EmbeddedOneToManyRoleType employees, _) = meta.AddOneToMany(organization, person, "Employee");
 
-            var population = new EmbeddedPopulation();
+            var population = new EmbeddedPopulation(meta);
 
             var acme = population.Create(organization);
             var jane = population.Create(person);
@@ -46,7 +45,7 @@
             var person = meta.AddClass("Person");
             (EmbeddedOneToManyRoleType employees, _) = meta.AddOneToMany(organization, person, "Employee");
 
-            var population = new EmbeddedPopulation();
+            var population = new EmbeddedPopulation(meta);
 
             var acme = population.Create(organization);
             var jane = population.Create(person);
@@ -72,7 +71,7 @@
             var person = meta.AddClass("Person");
             (EmbeddedOneToManyRoleType employees, _) = meta.AddOneToMany(organization, person, "Employee");
 
-            var population = new EmbeddedPopulation();
+            var population = new EmbeddedPopulation(meta);
 
             var acme = population.Create(organization);
             var jane = population.Create(person);
@@ -99,7 +98,7 @@
             var person = meta.AddClass("Person", named);
             (EmbeddedOneToManyRoleType employees, _) = meta.AddOneToMany(organization, person, "Employee");
 
-            var population = new EmbeddedPopulation();
+            var population = new EmbeddedPopulation(meta);
 
             var acme = population.Create(organization);
 
@@ -136,7 +135,7 @@
             var person = meta.AddClass("Person");
             (EmbeddedOneToManyRoleType employees, _) = meta.AddOneToMany(organization, person, "Employee");
 
-            var population = new EmbeddedPopulation();
+            var population = new EmbeddedPopulation(meta);
 
             var acme = population.Create(organization);
             var jane = population.Create(person);
@@ -186,7 +185,7 @@
             var person = meta.AddClass("Person");
             (EmbeddedOneToManyRoleType employees, _) = meta.AddOneToMany(organization, person, "Employee");
 
-            var population = new EmbeddedPopulation();
+            var population = new EmbeddedPopulation(meta);
 
             var acme = population.Create(organization);
             var jane = population.Create(person);
@@ -216,7 +215,7 @@
             var person = meta.AddClass("Person");
             (EmbeddedOneToManyRoleType employees, _) = meta.AddOneToMany(organization, person, "Employee");
 
-            var population = new EmbeddedPopulation();
+            var population = new EmbeddedPopulation(meta);
 
             var acme = population.Create(organization);
             var jane = population.Create(person);
@@ -246,7 +245,7 @@
             var person = meta.AddClass("Person");
             (EmbeddedOneToManyRoleType employees, _) = meta.AddOneToMany(organization, person, "Employee");
 
-            var population = new EmbeddedPopulation();
+            var population = new EmbeddedPopulation(meta);
 
             var acme = population.Create(organization);
             var jane = population.Create(person);
