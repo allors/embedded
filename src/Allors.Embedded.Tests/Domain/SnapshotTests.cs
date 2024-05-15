@@ -85,7 +85,7 @@
             changedEmployees = snapshot.ChangedRoles(employees);
             Assert.Empty(changedEmployees);
 
-            acme["Employees"] = Array.Empty<EmbeddedObject>();
+            acme["Employees"] = Array.Empty<IEmbeddedObject>();
 
             acme["Employees"] = new[] { jane, john };
 

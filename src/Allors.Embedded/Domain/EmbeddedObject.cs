@@ -6,17 +6,12 @@
     using System.Linq;
     using Allors.Embedded.Meta;
 
-    public abstract class EmbeddedObject
+    public class EmbeddedObject(EmbeddedPopulation population, EmbeddedObjectType objectType)
+        : IEmbeddedObject
     {
-        protected EmbeddedObject(EmbeddedPopulation population, EmbeddedObjectType objectType)
-        {
-            this.Population = population;
-            this.ObjectType = objectType;
-        }
+        public EmbeddedPopulation Population { get; } = population;
 
-        public EmbeddedPopulation Population { get; }
-
-        public EmbeddedObjectType ObjectType { get; }
+        public EmbeddedObjectType ObjectType { get; } = objectType;
 
         public object? this[string name]
         {
@@ -27,8 +22,8 @@
                     return roleType switch
                     {
                         EmbeddedUnitRoleType unitRoleType => this.Population.GetRole(this, unitRoleType),
-                        IEmbeddedToOneRoleType toOneRoleType => (EmbeddedObject?)this.Population.GetRole(this, toOneRoleType),
-                        IEmbeddedToManyRoleType toManyRoleType => (IEnumerable<EmbeddedObject>?)this.Population.GetRole(this, toManyRoleType) ?? [],
+                        IEmbeddedToOneRoleType toOneRoleType => (IEmbeddedObject?)this.Population.GetRole(this, toOneRoleType),
+                        IEmbeddedToManyRoleType toManyRoleType => (IEnumerable<IEmbeddedObject>?)this.Population.GetRole(this, toManyRoleType) ?? [],
                         _ => throw new InvalidOperationException(),
                     };
                 }
@@ -37,8 +32,8 @@
                 {
                     return associationType switch
                     {
-                        IEmbeddedOneToAssociationType oneToAssociationType => (EmbeddedObject?)this.Population.GetAssociation(this, oneToAssociationType),
-                        IEmbeddedManyToAssociationType oneToAssociationType => (IEnumerable<EmbeddedObject>?)this.Population.GetAssociation(this, oneToAssociationType) ?? [],
+                        IEmbeddedOneToAssociationType oneToAssociationType => (IEmbeddedObject?)this.Population.GetAssociation(this, oneToAssociationType),
+                        IEmbeddedManyToAssociationType oneToAssociationType => (IEnumerable<IEmbeddedObject>?)this.Population.GetAssociation(this, oneToAssociationType) ?? [],
                         _ => throw new InvalidOperationException(),
                     };
                 }
@@ -79,8 +74,8 @@
             get => roleType switch
             {
                 EmbeddedUnitRoleType unitRoleType => this.Population.GetRole(this, unitRoleType),
-                IEmbeddedToOneRoleType toOneRoleType => (EmbeddedObject?)this.Population.GetRole(this, toOneRoleType),
-                IEmbeddedToManyRoleType toManyRoleType => (IEnumerable<EmbeddedObject>?)this.Population.GetRole(this, toManyRoleType) ?? [],
+                IEmbeddedToOneRoleType toOneRoleType => (IEmbeddedObject?)this.Population.GetRole(this, toOneRoleType),
+                IEmbeddedToManyRoleType toManyRoleType => (IEnumerable<IEmbeddedObject>?)this.Population.GetRole(this, toManyRoleType) ?? [],
                 _ => throw new InvalidOperationException(),
             };
             set
@@ -112,39 +107,39 @@
             set => this.Population.SetUnitRole(this, roleType, value);
         }
 
-        public EmbeddedObject? this[IEmbeddedToOneRoleType roleType]
+        public IEmbeddedObject? this[IEmbeddedToOneRoleType roleType]
         {
-            get => (EmbeddedObject?)this.Population.GetRole(this, roleType);
+            get => (IEmbeddedObject?)this.Population.GetRole(this, roleType);
             set => this.Population.SetToOneRole(this, roleType, value);
         }
 
-        public IReadOnlySet<EmbeddedObject> this[IEmbeddedToManyRoleType roleType]
+        public IReadOnlySet<IEmbeddedObject> this[IEmbeddedToManyRoleType roleType]
         {
-            get => (IReadOnlySet<EmbeddedObject>?)this.Population.GetRole(this, roleType) ?? ImmutableHashSet<EmbeddedObject>.Empty;
+            get => (IReadOnlySet<IEmbeddedObject>?)this.Population.GetRole(this, roleType) ?? ImmutableHashSet<IEmbeddedObject>.Empty;
             set => this.Population.SetToManyRole(this, roleType, value);
         }
 
         public object? this[IEmbeddedAssociationType associationType] => associationType switch
         {
-            IEmbeddedOneToAssociationType oneToAssociationType => (EmbeddedObject?)this.Population.GetAssociation(this, oneToAssociationType),
-            IEmbeddedManyToAssociationType oneToAssociationType => (IEnumerable<EmbeddedObject>?)this.Population.GetAssociation(this, oneToAssociationType) ?? [],
+            IEmbeddedOneToAssociationType oneToAssociationType => (IEmbeddedObject?)this.Population.GetAssociation(this, oneToAssociationType),
+            IEmbeddedManyToAssociationType oneToAssociationType => (IEnumerable<IEmbeddedObject>?)this.Population.GetAssociation(this, oneToAssociationType) ?? [],
             _ => throw new InvalidOperationException(),
         };
 
-        public EmbeddedObject? this[IEmbeddedOneToAssociationType associationType] => (EmbeddedObject?)this.Population.GetAssociation(this, associationType);
+        public IEmbeddedObject? this[IEmbeddedOneToAssociationType associationType] => (IEmbeddedObject?)this.Population.GetAssociation(this, associationType);
 
-        public IReadOnlySet<EmbeddedObject> this[IEmbeddedManyToAssociationType associationType] => (IReadOnlySet<EmbeddedObject>?)this.Population.GetAssociation(this, associationType) ?? ImmutableHashSet<EmbeddedObject>.Empty;
+        public IReadOnlySet<IEmbeddedObject> this[IEmbeddedManyToAssociationType associationType] => (IReadOnlySet<IEmbeddedObject>?)this.Population.GetAssociation(this, associationType) ?? ImmutableHashSet<IEmbeddedObject>.Empty;
 
-        public void Add(IEmbeddedToManyRoleType roleType, EmbeddedObject item) => this.Population.AddRole(this, roleType, item);
+        public void Add(IEmbeddedToManyRoleType roleType, IEmbeddedObject item) => this.Population.AddRole(this, roleType, item);
 
-        public void Add(IEmbeddedToManyRoleType roleType, params EmbeddedObject[] items) => this.Population.AddRole(this, roleType, items);
+        public void Add(IEmbeddedToManyRoleType roleType, params IEmbeddedObject[] items) => this.Population.AddRole(this, roleType, items);
 
-        public void Add(IEmbeddedToManyRoleType roleType, IEnumerable<EmbeddedObject> items) => this.Population.AddRole(this, roleType, items as EmbeddedObject[] ?? items.ToArray());
+        public void Add(IEmbeddedToManyRoleType roleType, IEnumerable<IEmbeddedObject> items) => this.Population.AddRole(this, roleType, items as IEmbeddedObject[] ?? items.ToArray());
 
-        public void Remove(IEmbeddedToManyRoleType roleType, EmbeddedObject item) => this.Population.RemoveRole(this, roleType, item);
+        public void Remove(IEmbeddedToManyRoleType roleType, IEmbeddedObject item) => this.Population.RemoveRole(this, roleType, item);
 
-        public void Remove(IEmbeddedToManyRoleType roleType, params EmbeddedObject[] items) => this.Population.RemoveRole(this, roleType, items);
+        public void Remove(IEmbeddedToManyRoleType roleType, params IEmbeddedObject[] items) => this.Population.RemoveRole(this, roleType, items);
 
-        public void Remove(IEmbeddedToManyRoleType roleType, IEnumerable<EmbeddedObject> items) => this.Population.RemoveRole(this, roleType, items as EmbeddedObject[] ?? items.ToArray());
+        public void Remove(IEmbeddedToManyRoleType roleType, IEnumerable<IEmbeddedObject> items) => this.Population.RemoveRole(this, roleType, items as EmbeddedObject[] ?? items.ToArray());
     }
 }

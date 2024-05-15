@@ -28,9 +28,9 @@
             acme.Add(employees, john);
             acme.Add(employees, jenny);
 
-            Assert.Contains(jane, (IEnumerable<EmbeddedObject>)acme["Employees"]!);
-            Assert.Contains(john, (IEnumerable<EmbeddedObject>)acme["Employees"]!);
-            Assert.Contains(jenny, (IEnumerable<EmbeddedObject>)acme["Employees"]!);
+            Assert.Contains(jane, (IEnumerable<IEmbeddedObject>)acme["Employees"]!);
+            Assert.Contains(john, (IEnumerable<IEmbeddedObject>)acme["Employees"]!);
+            Assert.Contains(jenny, (IEnumerable<IEmbeddedObject>)acme["Employees"]!);
 
             Assert.Equal(acme, jane["OrganizationWhereEmployee"]);
             Assert.Equal(acme, john["OrganizationWhereEmployee"]);
@@ -54,9 +54,9 @@
 
             acme.Add(employees, jane, john, jenny);
 
-            Assert.Contains(jane, (IEnumerable<EmbeddedObject>)acme["Employees"]!);
-            Assert.Contains(john, (IEnumerable<EmbeddedObject>)acme["Employees"]!);
-            Assert.Contains(jenny, (IEnumerable<EmbeddedObject>)acme["Employees"]!);
+            Assert.Contains(jane, (IEnumerable<IEmbeddedObject>)acme["Employees"]!);
+            Assert.Contains(john, (IEnumerable<IEmbeddedObject>)acme["Employees"]!);
+            Assert.Contains(jenny, (IEnumerable<IEmbeddedObject>)acme["Employees"]!);
 
             Assert.Equal(acme, jane["OrganizationWhereEmployee"]);
             Assert.Equal(acme, john["OrganizationWhereEmployee"]);
@@ -80,9 +80,9 @@
 
             acme.Add(employees, [jane, john, jenny]);
 
-            Assert.Contains(jane, (IEnumerable<EmbeddedObject>)acme["Employees"]!);
-            Assert.Contains(john, (IEnumerable<EmbeddedObject>)acme["Employees"]!);
-            Assert.Contains(jenny, (IEnumerable<EmbeddedObject>)acme["Employees"]!);
+            Assert.Contains(jane, (IEnumerable<IEmbeddedObject>)acme["Employees"]!);
+            Assert.Contains(john, (IEnumerable<IEmbeddedObject>)acme["Employees"]!);
+            Assert.Contains(jenny, (IEnumerable<IEmbeddedObject>)acme["Employees"]!);
 
             Assert.Equal(acme, jane["OrganizationWhereEmployee"]);
             Assert.Equal(acme, john["OrganizationWhereEmployee"]);
@@ -114,11 +114,11 @@
 
             hooli.Add(employees, jane);
 
-            Assert.Contains(jane, (IEnumerable<EmbeddedObject>)hooli["Employees"]!);
+            Assert.Contains(jane, (IEnumerable<IEmbeddedObject>)hooli["Employees"]!);
 
-            Assert.DoesNotContain(jane, (IEnumerable<EmbeddedObject>)acme["Employees"]!);
-            Assert.Contains(john, (IEnumerable<EmbeddedObject>)acme["Employees"]!);
-            Assert.Contains(jenny, (IEnumerable<EmbeddedObject>)acme["Employees"]!);
+            Assert.DoesNotContain(jane, (IEnumerable<IEmbeddedObject>)acme["Employees"]!);
+            Assert.Contains(john, (IEnumerable<IEmbeddedObject>)acme["Employees"]!);
+            Assert.Contains(jenny, (IEnumerable<IEmbeddedObject>)acme["Employees"]!);
 
             Assert.Equal(hooli, jane["OrganizationWhereEmployee"]);
 
@@ -148,9 +148,9 @@
 
             acme.Remove(employees, jane);
 
-            Assert.DoesNotContain(jane, (IEnumerable<EmbeddedObject>)acme["Employees"]!);
-            Assert.Contains(john, (IEnumerable<EmbeddedObject>)acme["Employees"]!);
-            Assert.Contains(jenny, (IEnumerable<EmbeddedObject>)acme["Employees"]!);
+            Assert.DoesNotContain(jane, (IEnumerable<IEmbeddedObject>)acme["Employees"]!);
+            Assert.Contains(john, (IEnumerable<IEmbeddedObject>)acme["Employees"]!);
+            Assert.Contains(jenny, (IEnumerable<IEmbeddedObject>)acme["Employees"]!);
 
             Assert.NotEqual(acme, jane["OrganizationWhereEmployee"]);
             Assert.Equal(acme, john["OrganizationWhereEmployee"]);
@@ -158,9 +158,9 @@
 
             acme.Remove(employees, john);
 
-            Assert.DoesNotContain(jane, (IEnumerable<EmbeddedObject>)acme["Employees"]!);
-            Assert.DoesNotContain(john, (IEnumerable<EmbeddedObject>)acme["Employees"]!);
-            Assert.Contains(jenny, (IEnumerable<EmbeddedObject>)acme["Employees"]!);
+            Assert.DoesNotContain(jane, (IEnumerable<IEmbeddedObject>)acme["Employees"]!);
+            Assert.DoesNotContain(john, (IEnumerable<IEmbeddedObject>)acme["Employees"]!);
+            Assert.Contains(jenny, (IEnumerable<IEmbeddedObject>)acme["Employees"]!);
 
             Assert.NotEqual(acme, jane["OrganizationWhereEmployee"]);
             Assert.NotEqual(acme, john["OrganizationWhereEmployee"]);
@@ -168,9 +168,9 @@
 
             acme.Remove(employees, jenny);
 
-            Assert.DoesNotContain(jane, (IEnumerable<EmbeddedObject>)acme["Employees"]!);
-            Assert.DoesNotContain(john, (IEnumerable<EmbeddedObject>)acme["Employees"]!);
-            Assert.DoesNotContain(jenny, (IEnumerable<EmbeddedObject>)acme["Employees"]!);
+            Assert.DoesNotContain(jane, (IEnumerable<IEmbeddedObject>)acme["Employees"]!);
+            Assert.DoesNotContain(john, (IEnumerable<IEmbeddedObject>)acme["Employees"]!);
+            Assert.DoesNotContain(jenny, (IEnumerable<IEmbeddedObject>)acme["Employees"]!);
 
             Assert.NotEqual(acme, jane["OrganizationWhereEmployee"]);
             Assert.NotEqual(acme, john["OrganizationWhereEmployee"]);
@@ -198,9 +198,9 @@
 
             acme.Remove(employees, jane, john);
 
-            Assert.DoesNotContain(jane, (IEnumerable<EmbeddedObject>)acme["Employees"]!);
-            Assert.DoesNotContain(john, (IEnumerable<EmbeddedObject>)acme["Employees"]!);
-            Assert.Contains(jenny, (IEnumerable<EmbeddedObject>)acme["Employees"]!);
+            Assert.DoesNotContain(jane, (IEnumerable<IEmbeddedObject>)acme["Employees"]!);
+            Assert.DoesNotContain(john, (IEnumerable<IEmbeddedObject>)acme["Employees"]!);
+            Assert.Contains(jenny, (IEnumerable<IEmbeddedObject>)acme["Employees"]!);
 
             Assert.NotEqual(acme, jane["OrganizationWhereEmployee"]);
             Assert.NotEqual(acme, john["OrganizationWhereEmployee"]);
@@ -228,9 +228,9 @@
 
             acme.Remove(employees, [jane, john]);
 
-            Assert.DoesNotContain(jane, (IEnumerable<EmbeddedObject>)acme["Employees"]!);
-            Assert.DoesNotContain(john, (IEnumerable<EmbeddedObject>)acme["Employees"]!);
-            Assert.Contains(jenny, (IEnumerable<EmbeddedObject>)acme["Employees"]!);
+            Assert.DoesNotContain(jane, (IEnumerable<IEmbeddedObject>)acme["Employees"]!);
+            Assert.DoesNotContain(john, (IEnumerable<IEmbeddedObject>)acme["Employees"]!);
+            Assert.Contains(jenny, (IEnumerable<IEmbeddedObject>)acme["Employees"]!);
 
             Assert.NotEqual(acme, jane["OrganizationWhereEmployee"]);
             Assert.NotEqual(acme, john["OrganizationWhereEmployee"]);
@@ -258,9 +258,9 @@
 
             acme["Employees"] = null;
 
-            Assert.DoesNotContain(jane, (IEnumerable<EmbeddedObject>)acme["Employees"]!);
-            Assert.DoesNotContain(john, (IEnumerable<EmbeddedObject>)acme["Employees"]!);
-            Assert.DoesNotContain(jenny, (IEnumerable<EmbeddedObject>)acme["Employees"]!);
+            Assert.DoesNotContain(jane, (IEnumerable<IEmbeddedObject>)acme["Employees"]!);
+            Assert.DoesNotContain(john, (IEnumerable<IEmbeddedObject>)acme["Employees"]!);
+            Assert.DoesNotContain(jenny, (IEnumerable<IEmbeddedObject>)acme["Employees"]!);
 
             Assert.NotEqual(acme, jane["OrganizationWhereEmployee"]);
             Assert.NotEqual(acme, john["OrganizationWhereEmployee"]);
@@ -270,11 +270,11 @@
             acme.Add(employees, john);
             acme.Add(employees, jenny);
 
-            acme["Employees"] = Array.Empty<EmbeddedObject>();
+            acme["Employees"] = Array.Empty<IEmbeddedObject>();
 
-            Assert.DoesNotContain(jane, (IEnumerable<EmbeddedObject>)acme["Employees"]!);
-            Assert.DoesNotContain(john, (IEnumerable<EmbeddedObject>)acme["Employees"]!);
-            Assert.DoesNotContain(jenny, (IEnumerable<EmbeddedObject>)acme["Employees"]!);
+            Assert.DoesNotContain(jane, (IEnumerable<IEmbeddedObject>)acme["Employees"]!);
+            Assert.DoesNotContain(john, (IEnumerable<IEmbeddedObject>)acme["Employees"]!);
+            Assert.DoesNotContain(jenny, (IEnumerable<IEmbeddedObject>)acme["Employees"]!);
 
             Assert.NotEqual(acme, jane["OrganizationWhereEmployee"]);
             Assert.NotEqual(acme, john["OrganizationWhereEmployee"]);
@@ -284,11 +284,11 @@
             acme.Add(employees, john);
             acme.Add(employees, jenny);
 
-            acme["Employees"] = ImmutableHashSet<EmbeddedObject>.Empty;
+            acme["Employees"] = ImmutableHashSet<IEmbeddedObject>.Empty;
 
-            Assert.DoesNotContain(jane, (IEnumerable<EmbeddedObject>)acme["Employees"]!);
-            Assert.DoesNotContain(john, (IEnumerable<EmbeddedObject>)acme["Employees"]!);
-            Assert.DoesNotContain(jenny, (IEnumerable<EmbeddedObject>)acme["Employees"]!);
+            Assert.DoesNotContain(jane, (IEnumerable<IEmbeddedObject>)acme["Employees"]!);
+            Assert.DoesNotContain(john, (IEnumerable<IEmbeddedObject>)acme["Employees"]!);
+            Assert.DoesNotContain(jenny, (IEnumerable<IEmbeddedObject>)acme["Employees"]!);
 
             Assert.NotEqual(acme, jane["OrganizationWhereEmployee"]);
             Assert.NotEqual(acme, john["OrganizationWhereEmployee"]);

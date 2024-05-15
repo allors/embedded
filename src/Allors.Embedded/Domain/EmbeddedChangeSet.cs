@@ -6,22 +6,22 @@
     using Allors.Embedded.Meta;
 
     public sealed class EmbeddedChangeSet(
-        IReadOnlyDictionary<IEmbeddedRoleType, Dictionary<EmbeddedObject, object>> roleByAssociationByRoleType,
-        IReadOnlyDictionary<IEmbeddedCompositeAssociationType, Dictionary<EmbeddedObject, object>> associationByRoleByAssociationType)
+        IReadOnlyDictionary<IEmbeddedRoleType, Dictionary<IEmbeddedObject, object>> roleByAssociationByRoleType,
+        IReadOnlyDictionary<IEmbeddedCompositeAssociationType, Dictionary<IEmbeddedObject, object>> associationByRoleByAssociationType)
     {
-        private static readonly IReadOnlyDictionary<EmbeddedObject, object> Empty = new ReadOnlyDictionary<EmbeddedObject, object>(new Dictionary<EmbeddedObject, object>());
+        private static readonly IReadOnlyDictionary<IEmbeddedObject, object> Empty = new ReadOnlyDictionary<IEmbeddedObject, object>(new Dictionary<IEmbeddedObject, object>());
 
         public bool HasChanges =>
             roleByAssociationByRoleType.Any(v => v.Value.Count > 0) ||
             associationByRoleByAssociationType.Any(v => v.Value.Count > 0);
 
-        public IReadOnlyDictionary<EmbeddedObject, object> ChangedRoles(EmbeddedObjectType objectType, string name)
+        public IReadOnlyDictionary<IEmbeddedObject, object> ChangedRoles(EmbeddedObjectType objectType, string name)
         {
             var roleType = objectType.RoleTypeByName[name];
             return this.ChangedRoles(roleType);
         }
 
-        public IReadOnlyDictionary<EmbeddedObject, object> ChangedRoles(IEmbeddedRoleType roleType)
+        public IReadOnlyDictionary<IEmbeddedObject, object> ChangedRoles(IEmbeddedRoleType roleType)
         {
             roleByAssociationByRoleType.TryGetValue(roleType, out var changedRelations);
             return changedRelations ?? Empty;

@@ -17,7 +17,7 @@
 
             var population = new EmbeddedPopulation(meta);
 
-            EmbeddedObject NewPerson(string firstName, string lastName)
+            IEmbeddedObject NewPerson(string firstName, string lastName)
             {
                 return population.Create(person, v =>
                 {

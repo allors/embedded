@@ -7,11 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Introduce IEmbeddedObject (#10)
+
 ## [3.1.0] - 2024-05-14
 
 ### Added
 
-- Typed objects (#1)
+- Typed objects (#8)
 
 ## [3.0.1] - 2024-04-18
 

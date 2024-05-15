@@ -1,4 +1,6 @@
 ﻿namespace Allors.Embedded.Tests.Domain.Static
 {
-    public interface I12;
+    using Allors.Embedded.Domain;
+
+    public interface I12 : IEmbeddedObject;
 }
