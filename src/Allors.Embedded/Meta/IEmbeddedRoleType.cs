@@ -12,6 +12,6 @@
 
         string Name { get; }
 
-        void Deconstruct(out IEmbeddedRoleType roleType, out IEmbeddedAssociationType associationType);
+        void Deconstruct(out IEmbeddedAssociationType associationType, out IEmbeddedRoleType roleType);
     }
 }

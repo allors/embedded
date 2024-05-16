@@ -26,7 +26,7 @@
                 },
             };
 
-            var john = population.Create(person);
+            var john = population.Build(person);
             john[firstName] = "John";
             john[lastName] = "Doe";
 
@@ -36,7 +36,7 @@
 
             population.DerivationById["FullName"] = new GreetingDerivation(population.DerivationById["FullName"], firstName, lastName);
 
-            var jane = population.Create(person);
+            var jane = population.Build(person);
             jane[firstName] = "Jane";
             jane[lastName] = "Doe";
 

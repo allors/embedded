@@ -15,14 +15,14 @@
             var meta = new EmbeddedMeta();
             var organization = meta.AddClass("Organization");
             var person = meta.AddClass("Person");
-            (EmbeddedOneToManyRoleType employees, _) = meta.AddOneToMany(organization, person, "Employee");
+            EmbeddedOneToManyRoleType employees = meta.AddOneToMany(organization, person, "Employee");
 
             var population = new EmbeddedPopulation(meta);
 
-            var acme = population.Create(organization);
-            var jane = population.Create(person);
-            var john = population.Create(person);
-            var jenny = population.Create(person);
+            var acme = population.Build(organization);
+            var jane = population.Build(person);
+            var john = population.Build(person);
+            var jenny = population.Build(person);
 
             acme.Add(employees, jane);
             acme.Add(employees, john);
@@ -43,14 +43,14 @@
             var meta = new EmbeddedMeta();
             var organization = meta.AddClass("Organization");
             var person = meta.AddClass("Person");
-            (EmbeddedOneToManyRoleType employees, _) = meta.AddOneToMany(organization, person, "Employee");
+            EmbeddedOneToManyRoleType employees = meta.AddOneToMany(organization, person, "Employee");
 
             var population = new EmbeddedPopulation(meta);
 
-            var acme = population.Create(organization);
-            var jane = population.Create(person);
-            var john = population.Create(person);
-            var jenny = population.Create(person);
+            var acme = population.Build(organization);
+            var jane = population.Build(person);
+            var john = population.Build(person);
+            var jenny = population.Build(person);
 
             acme.Add(employees, jane, john, jenny);
 
@@ -69,14 +69,14 @@
             var meta = new EmbeddedMeta();
             var organization = meta.AddClass("Organization");
             var person = meta.AddClass("Person");
-            (EmbeddedOneToManyRoleType employees, _) = meta.AddOneToMany(organization, person, "Employee");
+            EmbeddedOneToManyRoleType employees = meta.AddOneToMany(organization, person, "Employee");
 
             var population = new EmbeddedPopulation(meta);
 
-            var acme = population.Create(organization);
-            var jane = population.Create(person);
-            var john = population.Create(person);
-            var jenny = population.Create(person);
+            var acme = population.Build(organization);
+            var jane = population.Build(person);
+            var john = population.Build(person);
+            var jenny = population.Build(person);
 
             acme.Add(employees, [jane, john, jenny]);
 
@@ -96,21 +96,21 @@
             var named = meta.AddInterface("Named");
             var organization = meta.AddClass("Organization", named);
             var person = meta.AddClass("Person", named);
-            (EmbeddedOneToManyRoleType employees, _) = meta.AddOneToMany(organization, person, "Employee");
+            EmbeddedOneToManyRoleType employees = meta.AddOneToMany(organization, person, "Employee");
 
             var population = new EmbeddedPopulation(meta);
 
-            var acme = population.Create(organization);
+            var acme = population.Build(organization);
 
-            var jane = population.Create(person);
-            var john = population.Create(person);
-            var jenny = population.Create(person);
+            var jane = population.Build(person);
+            var john = population.Build(person);
+            var jenny = population.Build(person);
 
             acme.Add(employees, jane);
             acme.Add(employees, john);
             acme.Add(employees, jenny);
 
-            var hooli = population.Create(organization);
+            var hooli = population.Build(organization);
 
             hooli.Add(employees, jane);
 
@@ -133,14 +133,14 @@
             var meta = new EmbeddedMeta();
             var organization = meta.AddClass("Organization");
             var person = meta.AddClass("Person");
-            (EmbeddedOneToManyRoleType employees, _) = meta.AddOneToMany(organization, person, "Employee");
+            EmbeddedOneToManyRoleType employees = meta.AddOneToMany(organization, person, "Employee");
 
             var population = new EmbeddedPopulation(meta);
 
-            var acme = population.Create(organization);
-            var jane = population.Create(person);
-            var john = population.Create(person);
-            var jenny = population.Create(person);
+            var acme = population.Build(organization);
+            var jane = population.Build(person);
+            var john = population.Build(person);
+            var jenny = population.Build(person);
 
             acme.Add(employees, jane);
             acme.Add(employees, john);
@@ -183,14 +183,14 @@
             var meta = new EmbeddedMeta();
             var organization = meta.AddClass("Organization");
             var person = meta.AddClass("Person");
-            (EmbeddedOneToManyRoleType employees, _) = meta.AddOneToMany(organization, person, "Employee");
+            EmbeddedOneToManyRoleType employees = meta.AddOneToMany(organization, person, "Employee");
 
             var population = new EmbeddedPopulation(meta);
 
-            var acme = population.Create(organization);
-            var jane = population.Create(person);
-            var john = population.Create(person);
-            var jenny = population.Create(person);
+            var acme = population.Build(organization);
+            var jane = population.Build(person);
+            var john = population.Build(person);
+            var jenny = population.Build(person);
 
             acme.Add(employees, jane);
             acme.Add(employees, john);
@@ -213,14 +213,14 @@
             var meta = new EmbeddedMeta();
             var organization = meta.AddClass("Organization");
             var person = meta.AddClass("Person");
-            (EmbeddedOneToManyRoleType employees, _) = meta.AddOneToMany(organization, person, "Employee");
+            EmbeddedOneToManyRoleType employees = meta.AddOneToMany(organization, person, "Employee");
 
             var population = new EmbeddedPopulation(meta);
 
-            var acme = population.Create(organization);
-            var jane = population.Create(person);
-            var john = population.Create(person);
-            var jenny = population.Create(person);
+            var acme = population.Build(organization);
+            var jane = population.Build(person);
+            var john = population.Build(person);
+            var jenny = population.Build(person);
 
             acme.Add(employees, jane);
             acme.Add(employees, john);
@@ -243,14 +243,14 @@
             var meta = new EmbeddedMeta();
             var organization = meta.AddClass("Organization");
             var person = meta.AddClass("Person");
-            (EmbeddedOneToManyRoleType employees, _) = meta.AddOneToMany(organization, person, "Employee");
+            EmbeddedOneToManyRoleType employees = meta.AddOneToMany(organization, person, "Employee");
 
             var population = new EmbeddedPopulation(meta);
 
-            var acme = population.Create(organization);
-            var jane = population.Create(person);
-            var john = population.Create(person);
-            var jenny = population.Create(person);
+            var acme = population.Build(organization);
+            var jane = population.Build(person);
+            var john = population.Build(person);
+            var jenny = population.Build(person);
 
             acme.Add(employees, jane);
             acme.Add(employees, john);

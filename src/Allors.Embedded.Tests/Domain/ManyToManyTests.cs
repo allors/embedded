@@ -18,18 +18,18 @@
             var organization = meta.AddClass("Organization");
             var person = meta.AddClass("Person");
             var name = meta.AddUnit<string>(organization, "Name");
-            var (employees, organizationWhereEmployee) = meta.AddManyToMany(organization, person, "Employee");
+            var (organizationWhereEmployee, employees) = meta.AddManyToMany(organization, person, "Employee");
 
             var diagram = new ClassDiagram(meta).Render();
 
             var population = new EmbeddedPopulation(meta);
 
-            var acme = population.Create(organization, v => v[name] = "Acme");
-            var hooli = population.Create(organization, v => v[name] = "Hooli");
+            var acme = population.Build(organization, v => v[name] = "Acme");
+            var hooli = population.Build(organization, v => v[name] = "Hooli");
 
-            var jane = population.Create(person);
-            var john = population.Create(person);
-            var jenny = population.Create(person);
+            var jane = population.Build(person);
+            var john = population.Build(person);
+            var jenny = population.Build(person);
 
             acme.Add(employees, jane);
             acme.Add(employees, john);
@@ -44,7 +44,7 @@
             Assert.Single(jenny[organizationWhereEmployee]);
             Assert.Contains(acme, jenny[organizationWhereEmployee]);
 
-            Assert.Equal(3, acme[employees].Count);
+            Assert.Equal(3, acme[employees].Count());
             Assert.Contains(jane, acme[employees]);
             Assert.Contains(john, acme[employees]);
             Assert.Contains(jenny, acme[employees]);
@@ -59,16 +59,16 @@
             var organization = meta.AddClass("Organization");
             var person = meta.AddClass("Person");
             var name = meta.AddUnit<string>(organization, "Name");
-            (EmbeddedManyToManyRoleType employees, _) = meta.AddManyToMany(organization, person, "Employee");
+            EmbeddedManyToManyRoleType employees = meta.AddManyToMany(organization, person, "Employee");
 
             var population = new EmbeddedPopulation(meta);
 
-            var acme = population.Create(organization, v => v[name] = "Acme");
-            var hooli = population.Create(organization, v => v[name] = "Hooli");
+            var acme = population.Build(organization, v => v[name] = "Acme");
+            var hooli = population.Build(organization, v => v[name] = "Hooli");
 
-            var jane = population.Create(person);
-            var john = population.Create(person);
-            var jenny = population.Create(person);
+            var jane = population.Build(person);
+            var john = population.Build(person);
+            var jenny = population.Build(person);
 
             acme[employees] = new[] { jane }.ToFrozenSet();
 
@@ -135,16 +135,16 @@
             var organization = meta.AddClass("Organization");
             var person = meta.AddClass("Person");
             meta.AddUnit<string>(organization, "Name");
-            (EmbeddedManyToManyRoleType employees, _) = meta.AddManyToMany(organization, person, "Employee");
+            EmbeddedManyToManyRoleType employees = meta.AddManyToMany(organization, person, "Employee");
 
             var population = new EmbeddedPopulation(meta);
 
-            var acme = population.Create(organization, v => v["Name"] = "Acme");
-            var hooli = population.Create(organization, v => v["Name"] = "Hooli");
+            var acme = population.Build(organization, v => v["Name"] = "Acme");
+            var hooli = population.Build(organization, v => v["Name"] = "Hooli");
 
-            var jane = population.Create(person);
-            var john = population.Create(person);
-            var jenny = population.Create(person);
+            var jane = population.Build(person);
+            var john = population.Build(person);
+            var jenny = population.Build(person);
 
             acme["Employees"] = new[] { jane, john, jenny };
 
@@ -195,16 +195,16 @@
             var organization = meta.AddClass("Organization");
             var person = meta.AddClass("Person");
             meta.AddUnit<string>(organization, "Name");
-            (EmbeddedManyToManyRoleType employees, _) = meta.AddManyToMany(organization, person, "Employee");
+            EmbeddedManyToManyRoleType employees = meta.AddManyToMany(organization, person, "Employee");
 
             var population = new EmbeddedPopulation(meta);
 
-            var acme = population.Create(organization, v => v["Name"] = "Acme");
-            var hooli = population.Create(organization, v => v["Name"] = "Hooli");
+            var acme = population.Build(organization, v => v["Name"] = "Acme");
+            var hooli = population.Build(organization, v => v["Name"] = "Hooli");
 
-            var jane = population.Create(person);
-            var john = population.Create(person);
-            var jenny = population.Create(person);
+            var jane = population.Build(person);
+            var john = population.Build(person);
+            var jenny = population.Build(person);
 
             acme.Add(employees, jane);
             acme.Add(employees, john);
@@ -284,13 +284,13 @@
             var organization = meta.AddClass("Organization");
             var person = meta.AddClass("Person");
             meta.AddUnit<string>(organization, "Name");
-            (EmbeddedManyToManyRoleType people, _) = meta.AddManyToMany(organization, person);
+            EmbeddedManyToManyRoleType people = meta.AddManyToMany(organization, person);
 
             var population = new EmbeddedPopulation(meta);
 
-            var acme = population.Create(organization, v => v["Name"] = "Acme");
+            var acme = population.Build(organization, v => v["Name"] = "Acme");
 
-            var jane = population.Create(person);
+            var jane = population.Build(person);
 
             acme.Add(people, jane);
 

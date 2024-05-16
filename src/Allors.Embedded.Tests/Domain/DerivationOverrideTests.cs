@@ -28,7 +28,7 @@
                 },
             };
 
-            var john = population.Create(person);
+            var john = population.Build(person);
             john["FirstName"] = "John";
             john["LastName"] = "Doe";
 

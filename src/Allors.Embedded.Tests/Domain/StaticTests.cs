@@ -18,9 +18,9 @@
 
             var population = new EmbeddedPopulation(meta);
 
-            var c1a = population.Create<C1>();
-            var c1b = population.Create<C1>();
-            var c2a = population.Create<C2>();
+            var c1a = population.Build<C1>();
+            var c1b = population.Build<C1>();
+            var c2a = population.Build<C2>();
 
             c1a[c1C2OneToOne] = c2a;
 

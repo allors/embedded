@@ -18,10 +18,10 @@
 
             var population = new EmbeddedPopulation(meta);
 
-            var acme = population.Create(organization, v =>
+            var acme = population.Build(organization, v =>
             {
                 v["Name"] = "Acme";
-                v["Owner"] = population.Create(person, w => w["Name"] = "Jane");
+                v["Owner"] = population.Build(person, w => w["Name"] = "Jane");
             });
 
             var jane = (EmbeddedObject)acme["Owner"]!;

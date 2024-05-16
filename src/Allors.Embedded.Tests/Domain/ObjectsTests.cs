@@ -19,7 +19,7 @@
 
             IEmbeddedObject NewPerson(string firstName, string lastName)
             {
-                return population.Create(person, v =>
+                return population.Build(person, v =>
                 {
                     v["FirstName"] = firstName;
                     v["LastName"] = lastName;

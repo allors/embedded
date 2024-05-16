@@ -17,12 +17,12 @@
 
             var population = new EmbeddedPopulation(meta);
 
-            var c1a = population.Create(c1, v =>
+            var c1a = population.Build(c1, v =>
             {
                 v["Same"] = "c1";
             });
 
-            var c2a = population.Create(c2, v =>
+            var c2a = population.Build(c2, v =>
             {
                 v["Same"] = "c2";
             });
@@ -40,8 +40,8 @@
 
             var population = new EmbeddedPopulation(meta);
 
-            var john = population.Create(person);
-            var jane = population.Create(person);
+            var john = population.Build(person);
+            var jane = population.Build(person);
 
             john["FirstName"] = "John";
             jane["FirstName"] = "Jane";
@@ -68,8 +68,8 @@
 
             var population = new EmbeddedPopulation(meta);
 
-            var john = population.Create(person);
-            var jane = population.Create(person);
+            var john = population.Build(person);
+            var jane = population.Build(person);
 
             john[unitRoleType] = "John";
             jane[unitRoleType] = "Jane";

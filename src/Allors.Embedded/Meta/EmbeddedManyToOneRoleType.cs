@@ -28,13 +28,13 @@
 
         public bool IsMany => false;
 
-        void IEmbeddedRoleType.Deconstruct(out IEmbeddedRoleType roleType, out IEmbeddedAssociationType associationType)
+        void IEmbeddedRoleType.Deconstruct(out IEmbeddedAssociationType associationType, out IEmbeddedRoleType roleType)
         {
             associationType = this.AssociationType;
             roleType = this;
         }
 
-        public void Deconstruct(out EmbeddedManyToOneRoleType roleType, out EmbeddedManyToOneAssociationType associationType)
+        public void Deconstruct(out EmbeddedManyToOneAssociationType associationType, out EmbeddedManyToOneRoleType roleType)
         {
             associationType = this.AssociationType;
             roleType = this;

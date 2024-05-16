@@ -1,19 +1,16 @@
 ﻿namespace Allors.Embedded.Domain
 {
     using System;
-    using System.Collections;
     using System.Collections.Generic;
     using System.Collections.Immutable;
+    using System.Globalization;
     using System.Linq;
     using Allors.Embedded.Meta;
 
     public sealed class EmbeddedPopulation(EmbeddedMeta meta)
     {
-        private readonly Dictionary<IEmbeddedRoleType, Dictionary<IEmbeddedObject, object>> roleByAssociationByRoleType = [];
-        private readonly Dictionary<IEmbeddedCompositeAssociationType, Dictionary<IEmbeddedObject, object>> associationByRoleByAssociationType = [];
-
-        private Dictionary<IEmbeddedRoleType, Dictionary<IEmbeddedObject, object>> changedRoleByAssociationByRoleType = [];
-        private Dictionary<IEmbeddedCompositeAssociationType, Dictionary<IEmbeddedObject, object>> changedAssociationByRoleByAssociationType = [];
+        private readonly EmbeddedRelations relations = new();
+        private readonly EmbeddedRelations changedRelations = new();
 
         private IImmutableList<IEmbeddedObject> objects = ImmutableArray<IEmbeddedObject>.Empty;
 
@@ -23,7 +20,7 @@
 
         public IReadOnlyList<IEmbeddedObject> Objects => this.objects;
 
-        public IEmbeddedObject Create(EmbeddedObjectType @class, params Action<IEmbeddedObject>[] builders)
+        public IEmbeddedObject Build(EmbeddedObjectType @class, params Action<IEmbeddedObject>[] builders)
         {
             var @new = @class.Type != null ? (IEmbeddedObject)Activator.CreateInstance(@class.Type, this, @class)! : new EmbeddedObject(this, @class);
             this.objects = this.objects.Add(@new);
@@ -36,7 +33,7 @@
             return @new;
         }
 
-        public IEmbeddedObject Create<T>(params Action<T>[] builders)
+        public IEmbeddedObject Build<T>(params Action<T>[] builders)
             where T : IEmbeddedObject
         {
             string className = typeof(T).Name;
@@ -58,109 +55,14 @@
             return @new;
         }
 
-        public EmbeddedChangeSet Snapshot()
+        public EmbeddedChangeSet Checkpoint()
         {
-            foreach (var roleType in this.changedRoleByAssociationByRoleType.Keys.ToArray())
-            {
-                var changedRoleByAssociation = this.changedRoleByAssociationByRoleType[roleType];
-                var roleByAssociation = this.RoleByAssociation(roleType);
-
-                foreach (var association in changedRoleByAssociation.Keys.ToArray())
-                {
-                    var role = changedRoleByAssociation[association];
-                    roleByAssociation.TryGetValue(association, out var originalRole);
-
-                    var compositeRoleType = roleType as IEmbeddedCompositeRoleType;
-
-                    var areEqual = ReferenceEquals(originalRole, role) ||
-                                   (compositeRoleType?.IsOne == true && Equals(originalRole, role)) ||
-                                   (compositeRoleType?.IsMany == true && Same(originalRole, role));
-
-                    if (areEqual)
-                    {
-                        changedRoleByAssociation.Remove(association);
-                        continue;
-                    }
-
-                    roleByAssociation[association] = role;
-                }
-
-                if (roleByAssociation.Count == 0)
-                {
-                    this.changedRoleByAssociationByRoleType.Remove(roleType);
-                }
-            }
-
-            foreach (var associationType in this.changedAssociationByRoleByAssociationType.Keys.ToArray())
-            {
-                var changedAssociationByRole = this.changedAssociationByRoleByAssociationType[associationType];
-                var associationByRole = this.AssociationByRole(associationType);
-
-                foreach (var role in changedAssociationByRole.Keys.ToArray())
-                {
-                    var changedAssociation = changedAssociationByRole[role];
-                    associationByRole.TryGetValue(role, out var originalAssociation);
-
-                    var areEqual = ReferenceEquals(originalAssociation, changedAssociation) ||
-                                   (associationType.IsOne && Equals(originalAssociation, changedAssociation)) ||
-                                   (associationType.IsMany && Same(originalAssociation, changedAssociation));
-
-                    if (areEqual)
-                    {
-                        changedAssociationByRole.Remove(role);
-                        continue;
-                    }
-
-                    associationByRole[role] = changedAssociation;
-                }
-
-                if (associationByRole.Count == 0)
-                {
-                    this.changedAssociationByRoleByAssociationType.Remove(associationType);
-                }
-            }
-
-            var snapshot = new EmbeddedChangeSet(this.changedRoleByAssociationByRoleType, this.changedAssociationByRoleByAssociationType);
-
-            foreach (var kvp in this.changedRoleByAssociationByRoleType)
-            {
-                var roleType = kvp.Key;
-                var changedRoleByAssociation = kvp.Value;
-
-                var roleByAssociation = this.RoleByAssociation(roleType);
-
-                foreach (var kvp2 in changedRoleByAssociation)
-                {
-                    var association = kvp2.Key;
-                    var changedRole = kvp2.Value;
-                    roleByAssociation[association] = changedRole;
-                }
-            }
-
-            foreach (var kvp in this.changedAssociationByRoleByAssociationType)
-            {
-                var associationType = kvp.Key;
-                var changedAssociationByRole = kvp.Value;
-
-                var associationByRole = this.AssociationByRole(associationType);
-
-                foreach (var kvp2 in changedAssociationByRole)
-                {
-                    var role = kvp2.Key;
-                    var changedAssociation = kvp2.Value;
-                    associationByRole[role] = changedAssociation;
-                }
-            }
-
-            this.changedRoleByAssociationByRoleType = [];
-            this.changedAssociationByRoleByAssociationType = [];
-
-            return snapshot;
+            return this.changedRelations.Snapshot(this.relations);
         }
 
         public void Derive()
         {
-            var changeSet = this.Snapshot();
+            var changeSet = this.Checkpoint();
 
             while (changeSet.HasChanges)
             {
@@ -169,165 +71,401 @@
                     derivation.Derive(changeSet);
                 }
 
-                changeSet = this.Snapshot();
+                changeSet = this.Checkpoint();
             }
         }
 
-        internal object? GetRole(IEmbeddedObject association, IEmbeddedRoleType roleType)
+        internal object? GetUnitRole(EmbeddedObject association, EmbeddedUnitRoleType roleType) => this.GetRole(association, roleType);
+
+        internal void SetUnitRole(EmbeddedObject association, EmbeddedUnitRoleType roleType, object? role)
         {
-            if (this.changedRoleByAssociationByRoleType.TryGetValue(roleType, out var changedRoleByAssociation) &&
-                changedRoleByAssociation.TryGetValue(association, out var role))
+            var normalizedRole = this.Normalize(roleType, role);
+
+            var currentRole = this.GetUnitRole(association, roleType);
+            if (Equals(currentRole, normalizedRole))
             {
-                return role;
-            }
-
-            this.RoleByAssociation(roleType).TryGetValue(association, out role);
-            return role;
-        }
-
-        internal void SetUnitRole(IEmbeddedObject association, EmbeddedUnitRoleType roleType, object? role)
-        {
-            var normalizedRole = roleType.Normalize(role);
-
-            if (normalizedRole == null)
-            {
-                this.RemoveUnitRole(association, roleType);
                 return;
             }
 
             // Role
-            this.ChangedRoleByAssociation(roleType)[association] = normalizedRole;
+            this.changedRelations.RoleByAssociation(roleType)[association] = normalizedRole;
         }
 
-        internal void SetToOneRole(IEmbeddedObject association, IEmbeddedToOneRoleType roleType, object? role)
-        {
-            var normalizedRole = roleType.Normalize(role);
+        internal IEmbeddedObject? GetToOneRole(IEmbeddedObject association, IEmbeddedToOneRoleType roleType) => (IEmbeddedObject?)this.GetRole(association, roleType);
 
-            if (normalizedRole == null)
+        internal void SetToOneRole(EmbeddedObject association, IEmbeddedToOneRoleType roleType, IEmbeddedObject? value)
+        {
+            switch (roleType)
             {
-                this.RemoveCompositeRole(association, roleType);
+            case EmbeddedOneToOneRoleType oneToOneRoleType:
+                if (value == null)
+                {
+                    this.RemoveOneToOneRole(association, oneToOneRoleType);
+                    return;
+                }
+
+                this.SetOneToOneRole(association, oneToOneRoleType, (EmbeddedObject)value);
+                return;
+
+            case EmbeddedManyToOneRoleType manyToOneRoleType:
+                if (value == null)
+                {
+                    this.RemoveManyToOneRole(association, manyToOneRoleType);
+                    return;
+                }
+
+                this.SetManyToOneRole(association, manyToOneRoleType, (EmbeddedObject)value);
+                return;
+
+            default:
+                throw new InvalidOperationException();
+            }
+        }
+
+        internal IImmutableSet<IEmbeddedObject>? GetToManyRole(IEmbeddedObject association, IEmbeddedToManyRoleType roleType) => (IImmutableSet<IEmbeddedObject>?)this.GetRole(association, roleType);
+
+        internal void SetToManyRole(EmbeddedObject association, IEmbeddedToManyRoleType roleType, IEnumerable<IEmbeddedObject> items)
+        {
+            var normalizedRole = this.Normalize(roleType, items).Distinct().ToArray();
+
+            switch (roleType)
+            {
+            case EmbeddedOneToManyRoleType toManyRoleType:
+                if (normalizedRole.Length == 0)
+                {
+                    this.RemoveOneToManyRole(association, toManyRoleType);
+                    return;
+                }
+
+                this.SetOneToManyRole(association, toManyRoleType, normalizedRole);
+                return;
+
+            case EmbeddedManyToManyRoleType toManyRoleType:
+                if (normalizedRole.Length == 0)
+                {
+                    this.RemoveManyToManyRole(association, toManyRoleType);
+                    return;
+                }
+
+                this.SetManyToManyRole(association, toManyRoleType, normalizedRole);
+                return;
+
+            default:
+                throw new InvalidOperationException();
+            }
+        }
+
+        internal void AddToManyRole(IEmbeddedObject association, IEmbeddedToManyRoleType roleType, IEmbeddedObject item)
+        {
+            switch (roleType)
+            {
+            case EmbeddedOneToManyRoleType toManyRoleType:
+                this.AddOneToManyRole(association, toManyRoleType, item);
+                return;
+
+            case EmbeddedManyToManyRoleType toManyRoleType:
+                this.AddManyToManyRole(association, toManyRoleType, item);
+                return;
+
+            default:
+                throw new InvalidOperationException();
+            }
+        }
+
+        internal void AddToManyRole(IEmbeddedObject association, IEmbeddedToManyRoleType roleType, IEmbeddedObject[]? items)
+        {
+            switch (roleType)
+            {
+            case EmbeddedOneToManyRoleType toManyRoleType:
+                this.AddOneToManyRole(association, toManyRoleType, items);
+                return;
+
+            case EmbeddedManyToManyRoleType toManyRoleType:
+                this.AddManyToManyRole(association, toManyRoleType, items);
+                return;
+
+            default:
+                throw new InvalidOperationException();
+            }
+        }
+
+        internal void RemoveToManyRole(IEmbeddedObject association, IEmbeddedToManyRoleType roleType, IEmbeddedObject item)
+        {
+            switch (roleType)
+            {
+            case EmbeddedOneToManyRoleType toManyRoleType:
+                this.RemoveOneToManyRole(association, toManyRoleType, item);
+                return;
+
+            case EmbeddedManyToManyRoleType toManyRoleType:
+                this.RemoveManyToManyRole(association, toManyRoleType, item);
+                return;
+
+            default:
+                throw new InvalidOperationException();
+            }
+        }
+
+        internal void RemoveToManyRole(IEmbeddedObject association, IEmbeddedToManyRoleType roleType, IEmbeddedObject[]? items)
+        {
+            switch (roleType)
+            {
+            case EmbeddedOneToManyRoleType toManyRoleType:
+                this.RemoveOneToManyRole(association, toManyRoleType, items);
+                return;
+
+            case EmbeddedManyToManyRoleType toManyRoleType:
+                this.RemoveManyToManyRole(association, toManyRoleType, items);
+                return;
+
+            default:
+                throw new InvalidOperationException();
+            }
+        }
+
+        internal IEmbeddedObject? GetToOneAssociation(IEmbeddedObject role, IEmbeddedCompositeAssociationType associationType)
+        {
+            if (!this.changedRelations.TryGetAssociation(role, associationType, out var association))
+            {
+                this.relations.AssociationByRole(associationType).TryGetValue(role, out association);
+            }
+
+            return (IEmbeddedObject?)association;
+        }
+
+        internal IImmutableSet<IEmbeddedObject>? GetToManyAssociation(IEmbeddedObject role, IEmbeddedCompositeAssociationType associationType)
+        {
+            if (!this.changedRelations.TryGetAssociation(role, associationType, out var association))
+            {
+                this.relations.AssociationByRole(associationType).TryGetValue(role, out association);
+            }
+
+            return (IImmutableSet<IEmbeddedObject>?)association;
+        }
+
+        private void SetOneToOneRole(IEmbeddedObject association, EmbeddedOneToOneRoleType roleType, object value)
+        {
+            /*  [if exist]        [then remove]        set
+             *
+             *  RA ----- R         RA --x-- R       RA    -- R       RA    -- R
+             *                ->                +        -        =       -
+             *   A ----- PR         A --x-- PR       A --    PR       A --    PR
+             */
+            var role = this.Normalize(roleType, value);
+            var previousRole = this.GetRole(association, roleType);
+
+            // R = PR
+            if (Equals(role, previousRole))
+            {
                 return;
             }
 
             var associationType = roleType.AssociationType;
-            var previousRole = this.GetRole(association, roleType);
 
-            var roleObject = (IEmbeddedObject)normalizedRole;
-
-            // Role
-            var changedRoleByAssociation = this.ChangedRoleByAssociation(roleType);
-            changedRoleByAssociation[association] = roleObject;
-
-            // Association
-            var changedAssociationByRole = this.ChangedAssociationByRole(associationType);
-            if (associationType.IsOne)
+            // A --x-- PR
+            if (previousRole != null)
             {
-                var previousAssociation = this.GetAssociation(roleObject, associationType);
-
-                // One to One
-                var previousAssociationObject = (IEmbeddedObject?)previousAssociation;
-                if (previousAssociationObject != null)
-                {
-                    changedRoleByAssociation.Remove(previousAssociationObject);
-                }
-
-                if (previousRole != null)
-                {
-                    var previousRoleObject = (IEmbeddedObject)previousRole;
-                    changedAssociationByRole.Remove(previousRoleObject);
-                }
-
-                changedAssociationByRole[roleObject] = association;
+                this.RemoveOneToOneRole(association, roleType);
             }
-            else
+
+            var roleAssociation = this.GetToOneAssociation(role, associationType);
+
+            // RA --x-- R
+            if (roleAssociation != null)
             {
-                // Many to One
-                var previousAssociation = (IImmutableSet<IEmbeddedObject>?)this.GetAssociation(roleObject, associationType);
-                if (previousAssociation?.Contains(roleObject) == true)
-                {
-                    changedAssociationByRole[roleObject] = previousAssociation.Remove(roleObject);
-                }
+                this.RemoveOneToOneRole(roleAssociation, roleType);
             }
+
+            // A <---- R
+            this.SetOneToAssociation(role, associationType, association);
+
+            // A ----> R
+            var changedRoleByAssociation = this.changedRelations.RoleByAssociation(roleType);
+            changedRoleByAssociation[association] = role;
         }
 
-        internal void SetToManyRole(IEmbeddedObject association, IEmbeddedToManyRoleType roleType, object? role)
+        private void RemoveOneToOneRole(IEmbeddedObject association, EmbeddedOneToOneRoleType roleType)
         {
-            var normalizedRole = roleType.Normalize(role);
+            /*                        delete
+             *
+             *   A ----- R    ->     A       R  =   A       R
+             */
 
-            if (normalizedRole == null)
+            var previousRole = (IEmbeddedObject?)this.GetRole(association, roleType);
+            if (previousRole == null)
             {
-                this.RemoveCompositeRole(association, roleType);
                 return;
             }
 
-            var previousRole = this.GetRole(association, roleType);
+            var associationType = roleType.AssociationType;
 
-            var roles = ((IEnumerable)normalizedRole).Cast<IEmbeddedObject>().ToArray();
-            var previousRoles = (IImmutableSet<IEmbeddedObject>?)previousRole;
+            // A <---- R
+            this.RemoveOneToAssociation(previousRole, associationType);
 
-            if (previousRoles != null)
+            // A ----> R
+            var changedRoleByAssociation = this.changedRelations.RoleByAssociation(roleType);
+            changedRoleByAssociation[association] = null;
+        }
+
+        private void SetManyToOneRole(IEmbeddedObject association, EmbeddedManyToOneRoleType roleType, object value)
+        {
+            /*  [if exist]        [then remove]        set
+             *
+             *  RA ----- R         RA       R       RA    -- R       RA ----- R
+             *                ->                +        -        =       -
+             *   A ----- PR         A --x-- PR       A --    PR       A --    PR
+             */
+            var role = this.Normalize(roleType, value);
+
+            var associationType = roleType.AssociationType;
+            var previousRole = this.GetToOneRole(association, roleType);
+
+            // R = PR
+            if (role.Equals(previousRole))
+            {
+                return;
+            }
+
+            // A --x-- PR
+            if (previousRole != null)
+            {
+                this.RemoveManyToAssociation(previousRole, associationType, association);
+            }
+
+            // A <---- R
+            this.AddManyToAssociation(role, associationType, association);
+
+            // A ----> R
+            var changedRoleByAssociation = this.changedRelations.RoleByAssociation(roleType);
+            changedRoleByAssociation[association] = role;
+        }
+
+        private void RemoveManyToOneRole(IEmbeddedObject association, EmbeddedManyToOneRoleType roleType)
+        {
+            /*                        delete
+             *  RA --                                RA --
+             *       -        ->                 =        -
+             *   A ----- R           A --x-- R             -- R
+             */
+
+            var previousRole = (IEmbeddedObject?)this.GetRole(association, roleType);
+            if (previousRole == null)
+            {
+                return;
+            }
+
+            var associationType = roleType.AssociationType;
+
+            // A <---- R
+            this.RemoveManyToAssociation(previousRole, associationType, association);
+
+            // A ----> R
+            var changedRoleByAssociation = this.changedRelations.RoleByAssociation(roleType);
+            changedRoleByAssociation[association] = null;
+        }
+
+        private void SetOneToManyRole(IEmbeddedObject association, EmbeddedOneToManyRoleType roleType, IEmbeddedObject[] role)
+        {
+            var previousRole = this.GetToManyRole(association, roleType);
+
+            if (previousRole == null)
+            {
+                foreach (var addedRole in role)
+                {
+                    this.AddOneToManyRole(association, roleType, addedRole);
+                }
+            }
+            else
             {
                 // Use Diff (Add/Remove)
-                var addedRoles = roles.Except(previousRoles);
-                var removedRoles = previousRoles.Except(roles);
-
-                foreach (var addedRole in addedRoles)
+                foreach (var addedRole in role.Except(previousRole))
                 {
-                    this.AddRole(association, roleType, addedRole);
+                    this.AddOneToManyRole(association, roleType, addedRole);
                 }
 
-                foreach (var removeRole in removedRoles)
+                foreach (var removeRole in previousRole.Except(role))
                 {
-                    this.RemoveRole(association, roleType, removeRole);
-                }
-            }
-            else
-            {
-                foreach (var addedRole in roles)
-                {
-                    this.AddRole(association, roleType, addedRole);
+                    this.RemoveOneToManyRole(association, roleType, removeRole);
                 }
             }
         }
 
-        internal void AddRole(IEmbeddedObject association, IEmbeddedToManyRoleType roleType, IEmbeddedObject item)
+        private void AddOneToManyRole(IEmbeddedObject association, EmbeddedOneToManyRoleType roleType, IEmbeddedObject role)
         {
+            /*  [if exist]        [then remove]        add
+             *
+             *  RA ----- R         RA --x-- R       RA    -- R       RA    -- R
+             *                ->                +        -        =       -
+             *   A ----- PR         A       PR       A --    PR       A ----- PR
+             */
+
+            var previousRole = (IImmutableSet<IEmbeddedObject>?)this.GetRole(association, roleType);
+
+            // R in PR
+            if (previousRole?.Contains(role) == true)
+            {
+                return;
+            }
+
             var associationType = roleType.AssociationType;
 
-            // Role
-            var changedRoleByAssociation = this.ChangedRoleByAssociation(roleType);
-            var previousRole = (IImmutableSet<IEmbeddedObject>?)this.GetRole(association, roleType);
-            var newRole = previousRole != null ? previousRole.Add(item) : ImmutableHashSet.Create(item);
-            changedRoleByAssociation[association] = newRole;
+            // RA --x-- R
+            var roleAssociation = this.GetToOneAssociation(role, associationType);
 
-            // Association
-            var changedAssociationByRole = this.ChangedAssociationByRole(associationType);
-            if (associationType.IsOne)
+            if (roleAssociation != null)
             {
-                var previousAssociation = (IEmbeddedObject?)this.GetAssociation(item, associationType);
+                this.RemoveOneToManyRole(roleAssociation, roleType, role);
+            }
 
-                // One to Many
-                if (previousAssociation != null)
+            // A <---- R
+            this.SetOneToAssociation(role, associationType, association);
+
+            // A ----> R
+            var changedRoleByAssociation = this.changedRelations.RoleByAssociation(roleType);
+            changedRoleByAssociation[association] = previousRole != null ? previousRole.Add(role) : ImmutableHashSet.Create(role);
+        }
+
+        private void RemoveOneToManyRole(IEmbeddedObject association, EmbeddedOneToManyRoleType roleType, IEmbeddedObject[]? items)
+        {
+            if (items == null || items.Length == 0)
+            {
+                return;
+            }
+
+            var associationType = roleType.AssociationType;
+
+            var previousRole = (IImmutableSet<IEmbeddedObject>?)this.GetRole(association, roleType);
+            if (previousRole?.Overlaps(items) == true)
+            {
+                // Role
+                var changedRoleByAssociation = this.changedRelations.RoleByAssociation(roleType);
+                changedRoleByAssociation[association] = previousRole.Except(items);
+
+                // Association
+                var changedAssociationByRole = this.changedRelations.AssociationByRole(associationType);
+
+                foreach (var item in items)
                 {
-                    var previousAssociationRole = (IImmutableSet<IEmbeddedObject>?)this.GetRole(previousAssociation, roleType);
-                    if (previousAssociationRole?.Contains(item) == true)
+                    if (associationType.IsOne)
                     {
-                        changedRoleByAssociation[previousAssociation] = previousAssociationRole.Remove(item);
+                        // One to Many
+                        changedAssociationByRole.Remove(item);
+                    }
+                    else
+                    {
+                        var previousAssociation = this.GetToManyAssociation(item, associationType);
+
+                        // Many to Many
+                        if (previousAssociation?.Contains(association) == true)
+                        {
+                            changedAssociationByRole[item] = previousAssociation.Remove(association);
+                        }
                     }
                 }
-
-                changedAssociationByRole[item] = association;
-            }
-            else
-            {
-                var previousAssociation = (IImmutableSet<IEmbeddedObject>?)this.GetAssociation(item, associationType);
-
-                // Many to Many
-                changedAssociationByRole[item] = previousAssociation != null ? previousAssociation.Add(association) : ImmutableHashSet.Create(association);
             }
         }
 
-        internal void AddRole(IEmbeddedObject association, IEmbeddedToManyRoleType roleType, IEmbeddedObject[]? items)
+        private void AddOneToManyRole(IEmbeddedObject association, EmbeddedOneToManyRoleType roleType, IEmbeddedObject[]? items)
         {
             if (items == null || items.Length == 0)
             {
@@ -337,17 +475,17 @@
             var associationType = roleType.AssociationType;
 
             // Role
-            var changedRoleByAssociation = this.ChangedRoleByAssociation(roleType);
+            var changedRoleByAssociation = this.changedRelations.RoleByAssociation(roleType);
             var previousRole = (IImmutableSet<IEmbeddedObject>?)this.GetRole(association, roleType);
             changedRoleByAssociation[association] = previousRole != null ? previousRole.Union(items) : ImmutableHashSet.Create(items);
 
             // Association
-            var changedAssociationByRole = this.ChangedAssociationByRole(associationType);
+            var changedAssociationByRole = this.changedRelations.AssociationByRole(associationType);
             foreach (var item in items)
             {
                 if (associationType.IsOne)
                 {
-                    var previousAssociation = (IEmbeddedObject?)this.GetAssociation(item, associationType);
+                    var previousAssociation = this.GetToOneAssociation(item, associationType);
 
                     // One to Many
                     if (previousAssociation != null)
@@ -363,7 +501,7 @@
                 }
                 else
                 {
-                    var previousAssociation = (IImmutableSet<IEmbeddedObject>?)this.GetAssociation(item, associationType);
+                    var previousAssociation = this.GetToManyAssociation(item, associationType);
 
                     // Many to Many
                     changedAssociationByRole[item] = previousAssociation != null ? previousAssociation.Add(association) : ImmutableHashSet.Create(association);
@@ -371,7 +509,41 @@
             }
         }
 
-        internal void RemoveRole(IEmbeddedObject association, IEmbeddedToManyRoleType roleType, IEmbeddedObject item)
+        private void RemoveOneToManyRole(IEmbeddedObject association, EmbeddedOneToManyRoleType roleType)
+        {
+            var associationType = roleType.AssociationType;
+
+            var previousRole = (IImmutableSet<IEmbeddedObject>?)this.GetRole(association, roleType);
+            if (previousRole != null)
+            {
+                // Role
+                var changedRoleByAssociation = this.changedRelations.RoleByAssociation(roleType);
+                changedRoleByAssociation.Remove(association);
+
+                // Association
+                var changedAssociationByRole = this.changedRelations.AssociationByRole(associationType);
+                foreach (var role in previousRole)
+                {
+                    if (associationType.IsOne)
+                    {
+                        // One to Many
+                        changedAssociationByRole[role] = null;
+                    }
+                    else
+                    {
+                        var previousAssociation = this.GetToManyAssociation(role, associationType);
+
+                        // Many to Many
+                        if (previousAssociation?.Contains(association) == true)
+                        {
+                            changedAssociationByRole[role] = previousAssociation.Remove(association);
+                        }
+                    }
+                }
+            }
+        }
+
+        private void RemoveOneToManyRole(IEmbeddedObject association, EmbeddedOneToManyRoleType roleType, IEmbeddedObject item)
         {
             var associationType = roleType.AssociationType;
 
@@ -379,11 +551,11 @@
             if (previousRole?.Contains(item) == true)
             {
                 // Role
-                var changedRoleByAssociation = this.ChangedRoleByAssociation(roleType);
+                var changedRoleByAssociation = this.changedRelations.RoleByAssociation(roleType);
                 changedRoleByAssociation[association] = previousRole.Remove(item);
 
                 // Association
-                var changedAssociationByRole = this.ChangedAssociationByRole(associationType);
+                var changedAssociationByRole = this.changedRelations.AssociationByRole(associationType);
                 if (associationType.IsOne)
                 {
                     // One to Many
@@ -391,7 +563,7 @@
                 }
                 else
                 {
-                    var previousAssociation = (IImmutableSet<IEmbeddedObject>?)this.GetAssociation(item, associationType);
+                    var previousAssociation = this.GetToManyAssociation(item, associationType);
 
                     // Many to Many
                     if (previousAssociation?.Contains(association) == true)
@@ -402,7 +574,185 @@
             }
         }
 
-        internal void RemoveRole(IEmbeddedObject association, IEmbeddedToManyRoleType roleType, IEmbeddedObject[]? items)
+        private void SetManyToManyRole(IEmbeddedObject association, EmbeddedManyToManyRoleType roleType, IEmbeddedObject[] normalizedRole)
+        {
+            var previousRole = this.GetRole(association, roleType);
+
+            var roles = normalizedRole.ToArray();
+            var previousRoles = (IImmutableSet<IEmbeddedObject>?)previousRole;
+
+            if (previousRoles != null)
+            {
+                // Use Diff (Add/Remove)
+                var addedRoles = roles.Except(previousRoles);
+                var removedRoles = previousRoles.Except(roles);
+
+                foreach (var addedRole in addedRoles)
+                {
+                    this.AddManyToManyRole(association, roleType, addedRole);
+                }
+
+                foreach (var removeRole in removedRoles)
+                {
+                    this.RemoveManyToManyRole(association, roleType, removeRole);
+                }
+            }
+            else
+            {
+                foreach (var addedRole in roles)
+                {
+                    this.AddManyToManyRole(association, roleType, addedRole);
+                }
+            }
+        }
+
+        private void AddManyToManyRole(IEmbeddedObject association, EmbeddedManyToManyRoleType roleType, IEmbeddedObject item)
+        {
+            var associationType = roleType.AssociationType;
+
+            // Role
+            var changedRoleByAssociation = this.changedRelations.RoleByAssociation(roleType);
+            var previousRole = (IImmutableSet<IEmbeddedObject>?)this.GetRole(association, roleType);
+            var newRole = previousRole != null ? previousRole.Add(item) : ImmutableHashSet.Create(item);
+            changedRoleByAssociation[association] = newRole;
+
+            // Association
+            var changedAssociationByRole = this.changedRelations.AssociationByRole(associationType);
+            if (associationType.IsOne)
+            {
+                var previousAssociation = this.GetToOneAssociation(item, associationType);
+
+                // One to Many
+                if (previousAssociation != null)
+                {
+                    var previousAssociationRole = (IImmutableSet<IEmbeddedObject>?)this.GetRole(previousAssociation, roleType);
+                    if (previousAssociationRole?.Contains(item) == true)
+                    {
+                        changedRoleByAssociation[previousAssociation] = previousAssociationRole.Remove(item);
+                    }
+                }
+
+                changedAssociationByRole[item] = association;
+            }
+            else
+            {
+                var previousAssociation = this.GetToManyAssociation(item, associationType);
+
+                // Many to Many
+                changedAssociationByRole[item] = previousAssociation != null ? previousAssociation.Add(association) : ImmutableHashSet.Create(association);
+            }
+        }
+
+        private void AddManyToManyRole(IEmbeddedObject association, EmbeddedManyToManyRoleType roleType, IEmbeddedObject[]? items)
+        {
+            if (items == null || items.Length == 0)
+            {
+                return;
+            }
+
+            var associationType = roleType.AssociationType;
+
+            // Role
+            var changedRoleByAssociation = this.changedRelations.RoleByAssociation(roleType);
+            var previousRole = (IImmutableSet<IEmbeddedObject>?)this.GetRole(association, roleType);
+            changedRoleByAssociation[association] = previousRole != null ? previousRole.Union(items) : ImmutableHashSet.Create(items);
+
+            // Association
+            var changedAssociationByRole = this.changedRelations.AssociationByRole(associationType);
+            foreach (var item in items)
+            {
+                if (associationType.IsOne)
+                {
+                    var previousAssociation = this.GetToOneAssociation(item, associationType);
+
+                    // One to Many
+                    if (previousAssociation != null)
+                    {
+                        var previousAssociationRole = (IImmutableSet<IEmbeddedObject>?)this.GetRole(previousAssociation, roleType);
+                        if (previousAssociationRole?.Contains(item) == true)
+                        {
+                            changedRoleByAssociation[previousAssociation] = previousAssociationRole.Remove(item);
+                        }
+                    }
+
+                    changedAssociationByRole[item] = association;
+                }
+                else
+                {
+                    var previousAssociation = this.GetToManyAssociation(item, associationType);
+
+                    // Many to Many
+                    changedAssociationByRole[item] = previousAssociation != null ? previousAssociation.Add(association) : ImmutableHashSet.Create(association);
+                }
+            }
+        }
+
+        private void RemoveManyToManyRole(IEmbeddedObject association, EmbeddedManyToManyRoleType roleType, IEmbeddedObject item)
+        {
+            var associationType = roleType.AssociationType;
+
+            var previousRole = (IImmutableSet<IEmbeddedObject>?)this.GetRole(association, roleType);
+            if (previousRole?.Contains(item) == true)
+            {
+                // Role
+                var changedRoleByAssociation = this.changedRelations.RoleByAssociation(roleType);
+                changedRoleByAssociation[association] = previousRole.Remove(item);
+
+                // Association
+                var changedAssociationByRole = this.changedRelations.AssociationByRole(associationType);
+                if (associationType.IsOne)
+                {
+                    // One to Many
+                    changedAssociationByRole.Remove(item);
+                }
+                else
+                {
+                    var previousAssociation = this.GetToManyAssociation(item, associationType);
+
+                    // Many to Many
+                    if (previousAssociation?.Contains(association) == true)
+                    {
+                        changedAssociationByRole[item] = previousAssociation.Remove(association);
+                    }
+                }
+            }
+        }
+
+        private void RemoveManyToManyRole(IEmbeddedObject association, EmbeddedManyToManyRoleType roleType)
+        {
+            var associationType = roleType.AssociationType;
+
+            var previousRole = (IImmutableSet<IEmbeddedObject>?)this.GetRole(association, roleType);
+            if (previousRole != null)
+            {
+                // Role
+                var changedRoleByAssociation = this.changedRelations.RoleByAssociation(roleType);
+                changedRoleByAssociation.Remove(association);
+
+                // Association
+                var changedAssociationByRole = this.changedRelations.AssociationByRole(associationType);
+                foreach (var role in previousRole)
+                {
+                    if (associationType.IsOne)
+                    {
+                        // One to Many
+                        changedAssociationByRole[role] = null;
+                    }
+                    else
+                    {
+                        var previousAssociation = this.GetToManyAssociation(role, associationType);
+
+                        // Many to Many
+                        if (previousAssociation?.Contains(association) == true)
+                        {
+                            changedAssociationByRole[role] = previousAssociation.Remove(association);
+                        }
+                    }
+                }
+            }
+        }
+
+        private void RemoveManyToManyRole(IEmbeddedObject association, EmbeddedManyToManyRoleType roleType, IEmbeddedObject[]? items)
         {
             if (items == null || items.Length == 0)
             {
@@ -415,11 +765,11 @@
             if (previousRole?.Overlaps(items) == true)
             {
                 // Role
-                var changedRoleByAssociation = this.ChangedRoleByAssociation(roleType);
+                var changedRoleByAssociation = this.changedRelations.RoleByAssociation(roleType);
                 changedRoleByAssociation[association] = previousRole.Except(items);
 
                 // Association
-                var changedAssociationByRole = this.ChangedAssociationByRole(associationType);
+                var changedAssociationByRole = this.changedRelations.AssociationByRole(associationType);
 
                 foreach (var item in items)
                 {
@@ -430,7 +780,7 @@
                     }
                     else
                     {
-                        var previousAssociation = (IImmutableSet<IEmbeddedObject>?)this.GetAssociation(item, associationType);
+                        var previousAssociation = this.GetToManyAssociation(item, associationType);
 
                         // Many to Many
                         if (previousAssociation?.Contains(association) == true)
@@ -442,125 +792,120 @@
             }
         }
 
-        internal object? GetAssociation(IEmbeddedObject role, IEmbeddedCompositeAssociationType associationType)
+        private void SetOneToAssociation(IEmbeddedObject role, IEmbeddedOneToAssociationType associationType, IEmbeddedObject association)
         {
-            if (this.changedAssociationByRoleByAssociationType.TryGetValue(associationType, out var changedAssociationByRole) &&
-                changedAssociationByRole.TryGetValue(role, out var association))
-            {
-                return association;
-            }
-
-            this.AssociationByRole(associationType).TryGetValue(role, out association);
-            return association;
+            var changedAssociationByRole = this.changedRelations.AssociationByRole(associationType);
+            changedAssociationByRole[role] = association;
         }
 
-        private static bool Same(object? source, object? destination)
+        private void RemoveOneToAssociation(IEmbeddedObject role, IEmbeddedOneToAssociationType associationType)
         {
-            if (source == null && destination == null)
-            {
-                return true;
-            }
-
-            if (source == null || destination == null)
-            {
-                return false;
-            }
-
-            if (source is IReadOnlySet<IEmbeddedObject> sourceSet)
-            {
-                return sourceSet.SetEquals((IEnumerable<IEmbeddedObject>)destination);
-            }
-
-            var destinationSet = (IReadOnlySet<IEmbeddedObject>)destination;
-            return destinationSet.SetEquals((IEnumerable<IEmbeddedObject>)source);
+            var changedAssociationByRole = this.changedRelations.AssociationByRole(associationType);
+            changedAssociationByRole[role] = null;
         }
 
-        private Dictionary<IEmbeddedObject, object> AssociationByRole(IEmbeddedCompositeAssociationType associationType)
+        private void AddManyToAssociation(IEmbeddedObject role, IEmbeddedManyToAssociationType associationType, IEmbeddedObject association)
         {
-            if (!this.associationByRoleByAssociationType.TryGetValue(associationType, out var associationByRole))
+            var previousAssociation = this.GetToManyAssociation(role, associationType);
+
+            if (previousAssociation?.Contains(role) != true)
             {
-                associationByRole = [];
-                this.associationByRoleByAssociationType[associationType] = associationByRole;
+                return;
             }
 
-            return associationByRole;
+            var changedAssociationByRole = this.changedRelations.AssociationByRole(associationType);
+            changedAssociationByRole[role] = previousAssociation.Remove(association);
         }
 
-        private Dictionary<IEmbeddedObject, object> RoleByAssociation(IEmbeddedRoleType roleType)
+        private void RemoveManyToAssociation(IEmbeddedObject role, IEmbeddedManyToAssociationType associationType, IEmbeddedObject association)
         {
-            if (!this.roleByAssociationByRoleType.TryGetValue(roleType, out var roleByAssociation))
+            var previousAssociation = this.GetToManyAssociation(role, associationType);
+
+            if (previousAssociation == null || previousAssociation.Contains(role))
             {
-                roleByAssociation = [];
-                this.roleByAssociationByRoleType[roleType] = roleByAssociation;
+                return;
             }
 
-            return roleByAssociation;
+            var changedAssociationByRole = this.changedRelations.AssociationByRole(associationType);
+            changedAssociationByRole[role] = previousAssociation.Remove(association);
         }
 
-        private Dictionary<IEmbeddedObject, object> ChangedAssociationByRole(IEmbeddedCompositeAssociationType associationType)
+        private object? GetRole(IEmbeddedObject association, IEmbeddedRoleType roleType)
         {
-            if (!this.changedAssociationByRoleByAssociationType.TryGetValue(associationType, out var changedAssociationByRole))
+            if (!this.changedRelations.TryGetRole(association, roleType, out var role))
             {
-                changedAssociationByRole = [];
-                this.changedAssociationByRoleByAssociationType[associationType] = changedAssociationByRole;
+                this.relations.RoleByAssociation(roleType).TryGetValue(association, out role);
             }
 
-            return changedAssociationByRole;
+            return role;
         }
 
-        private Dictionary<IEmbeddedObject, object> ChangedRoleByAssociation(IEmbeddedRoleType roleType)
+        private object? Normalize(EmbeddedUnitRoleType roleType, object? value)
         {
-            if (!this.changedRoleByAssociationByRoleType.TryGetValue(roleType, out var changedRoleByAssociation))
+            if (value == null)
             {
-                changedRoleByAssociation = [];
-                this.changedRoleByAssociationByRoleType[roleType] = changedRoleByAssociation;
+                return value;
             }
 
-            return changedRoleByAssociation;
-        }
-
-        private void RemoveUnitRole(IEmbeddedObject association, EmbeddedUnitRoleType roleType)
-        {
-            var previousRole = this.GetRole(association, roleType);
-            if (previousRole != null)
+            if (value is DateTime dateTime && dateTime != DateTime.MinValue && dateTime != DateTime.MaxValue)
             {
-                // Role
-                var changedRoleByAssociation = this.ChangedRoleByAssociation(roleType);
-                changedRoleByAssociation.Remove(association);
-            }
-        }
-
-        private void RemoveCompositeRole(IEmbeddedObject association, IEmbeddedCompositeRoleType roleType)
-        {
-            var associationType = roleType.AssociationType;
-
-            var previousRole = (IImmutableSet<IEmbeddedObject>?)this.GetRole(association, roleType);
-            if (previousRole != null)
-            {
-                // Role
-                var changedRoleByAssociation = this.ChangedRoleByAssociation(roleType);
-                changedRoleByAssociation.Remove(association);
-
-                // Association
-                var changedAssociationByRole = this.ChangedAssociationByRole(associationType);
-                foreach (var role in previousRole)
+                dateTime = dateTime.Kind switch
                 {
-                    if (associationType.IsOne)
-                    {
-                        // One to Many
-                        changedAssociationByRole.Remove(role);
-                    }
-                    else
-                    {
-                        var previousAssociation = (IImmutableSet<IEmbeddedObject>?)this.GetAssociation(role, associationType);
+                    DateTimeKind.Local => dateTime.ToUniversalTime(),
+                    DateTimeKind.Unspecified => throw new ArgumentException(@"DateTime value is of DateTimeKind.Kind Unspecified.
+Unspecified is only allowed for DateTime.MaxValue and DateTime.MinValue. 
+Use DateTimeKind.Utc or DateTimeKind.Local."),
+                    _ => dateTime,
+                };
 
-                        // Many to Many
-                        if (previousAssociation?.Contains(association) == true)
-                        {
-                            changedAssociationByRole[role] = previousAssociation.Remove(association);
-                        }
+                return new DateTime(dateTime.Year, dateTime.Month, dateTime.Day, dateTime.Hour, dateTime.Minute, dateTime.Second, dateTime.Millisecond, DateTimeKind.Utc);
+            }
+
+            if (value.GetType() != roleType.ObjectType.Type && roleType.ObjectType.TypeCode.HasValue)
+            {
+                value = Convert.ChangeType(value, roleType.ObjectType.TypeCode.Value, CultureInfo.InvariantCulture);
+            }
+
+            return value;
+        }
+
+        private IEmbeddedObject Normalize(IEmbeddedToOneRoleType roleType, object value)
+        {
+            if (value is EmbeddedObject embeddedObject)
+            {
+                if (!roleType.ObjectType.IsAssignableFrom(embeddedObject.ObjectType))
+                {
+                    throw new ArgumentException($"{roleType.Name} should be assignable to {roleType.ObjectType.Name} but was a {embeddedObject.ObjectType.Name}");
+                }
+
+                return embeddedObject;
+            }
+
+            throw new ArgumentException($"{roleType.Name} should be an embedded object but was a {value.GetType()}");
+        }
+
+        private IEnumerable<IEmbeddedObject> Normalize(IEmbeddedToManyRoleType roleType, IEnumerable<IEmbeddedObject?> value)
+        {
+            foreach (var @object in value)
+            {
+                if (@object == null)
+                {
+                    continue;
+                }
+
+                if (@object is IEmbeddedObject embeddedObject)
+                {
+                    if (!roleType.ObjectType.IsAssignableFrom(embeddedObject.ObjectType))
+                    {
+                        throw new ArgumentException($"{roleType.Name} should be assignable to {roleType.ObjectType.Name} but was a {embeddedObject.ObjectType.Name}");
                     }
                 }
+                else
+                {
+                    throw new ArgumentException($"{roleType.Name} should be an embedded object but was a {@object.GetType()}");
+                }
+
+                yield return embeddedObject;
             }
         }
     }
