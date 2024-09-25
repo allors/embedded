@@ -55,7 +55,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - initial upload
 
-[unreleased]: https://github.com/allors/embedded/compare/3.0.1...HEAD
+[unreleased]: https://github.com/allors/embedded/compare/3.2.0...HEAD
+[3.2.0]: https://github.com/allors/embedded/compare/3.1.0...3.2.0
+[3.1.0]: https://github.com/allors/embedded/compare/3.0.1...3.1.0
 [3.0.1]: https://github.com/allors/embedded/compare/3.0.0...3.0.1
 [3.0.0]: https://github.com/allors/embedded/compare/2.0.0...3.0.0
 [2.0.0]: https://github.com/allors/embedded/compare/1.1.0...2.0.0
