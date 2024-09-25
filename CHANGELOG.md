@@ -9,7 +9,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- Introduce IEmbeddedObject (#10)
+## [3.2.0]
+
+### Added
+
+- EmbeddedObject.Build<T> now returns T instead of IEmbeddedObject (#12)
 
 ## [3.1.0] - 2024-05-14
 

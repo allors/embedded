@@ -33,7 +33,7 @@
             return @new;
         }
 
-        public IEmbeddedObject Build<T>(params Action<T>[] builders)
+        public T Build<T>(params Action<T>[] builders)
             where T : IEmbeddedObject
         {
             string className = typeof(T).Name;
