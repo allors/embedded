@@ -1,4 +1,1 @@
-export function greet(name: string): string {
-    return `Hello, ${name}!`;
-  }
-  
+export { Meta } from "./meta/Meta"

@@ -1,6 +1,6 @@
 import { expect, test } from "vitest";
-import { greet } from "../src/index";
+import { Meta } from "../src/meta/Meta";
 
-test("greet function", () => {
-  expect(greet("World")).toBe("Hello, World!");
+test("Meta is exported", () => {
+  expect(Meta).toBeDefined();
 });
