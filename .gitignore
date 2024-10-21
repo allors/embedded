@@ -533,3 +533,8 @@ dist
 .yarn/build-state.yml
 .yarn/install-state.gz
 .pnp.*
+
+## Ignore Jetbrains files
+
+# Ignore .idea
+.idea/

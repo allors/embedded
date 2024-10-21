@@ -25,12 +25,18 @@
 
             foreach (var composite in composites)
             {
-                diagram += $"    class {composite.Name}\r\n";
+                diagram += $"""
+                                class {composite.Name}
+
+                            """;
 
                 var directSuperTypes = composite.DirectSupertypes;
                 foreach (var directSuperType in directSuperTypes)
                 {
-                    diagram += $"    {directSuperType.Name} <|-- {composite.Name}\r\n";
+                    diagram += $"""
+                                    {directSuperType.Name} <|-- {composite.Name}
+
+                                """;
                 }
 
                 var declaredRoleTypes = composite.DeclaredRoleTypeByName.Values.OrderBy(v => v.Name);
@@ -38,7 +44,10 @@
                 {
                     if (roleType is EmbeddedUnitRoleType)
                     {
-                        diagram += $"    {composite.Name} : {roleType.ObjectType.Name} {roleType.Name}\r\n";
+                        diagram += $"""
+                                        {composite.Name} : {roleType.ObjectType.Name} {roleType.Name}
+
+                                    """;
                     }
                     else if (roleType is IEmbeddedCompositeRoleType compositeRoleType && roleType.AssociationType is IEmbeddedCompositeAssociationType compositeAssociationType)
                     {
@@ -58,7 +67,10 @@
                             roleTypeMultiplicity = $" \"{roleTypeMultiplicity}\"";
                         }
 
-                        diagram += $"    {composite.Name} {associationTypeMultiplicity}o--{roleTypeMultiplicity} {roleType.ObjectType.Name} : {roleType.Name}\r\n";
+                        diagram += $"""
+                                        {composite.Name} {associationTypeMultiplicity}o--{roleTypeMultiplicity} {roleType.ObjectType.Name} : {roleType.Name}
+
+                                    """;
                     }
                 }
             }
