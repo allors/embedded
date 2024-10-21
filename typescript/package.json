@@ -1,0 +1,31 @@
+{
+  "name": "allors-embedded",
+  "version": "0.1.0",
+  "description": "Allors embedded",
+  "main": "dist/index.js",
+  "module": "dist/index.mjs",
+  "types": "dist/index.d.ts",
+  "files": ["dist"],
+  "scripts": {
+    "build": "tsup",
+    "dev": "tsup --watch",
+    "test": "vitest run",
+    "test:watch": "vitest"
+  },
+  "keywords": ["typescript", "library"],
+  "author": "Allors bv",
+  "license": "LGPL-3.0-or-later",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/allors/embedded"
+  },
+  "bugs": {
+    "url": "https://github.com/allors/embedded/issues"
+  },
+  "homepage": "https://github.com/allors/embedded#readme",
+  "devDependencies": {
+    "tsup": "^8.3.0",
+    "typescript": "^5.6.3",
+    "vitest": "^2.1.3"
+  }
+}
