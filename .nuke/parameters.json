@@ -1,4 +1,4 @@
 {
   "$schema": "./build.schema.json",
-  "Solution": "src/Allors.Embedded.sln"
+  "Solution": "dotnet/Allors.Embedded.sln"
 }
